@@ -17,3 +17,7 @@ Requires [rpyc](https://rpyc.readthedocs.io/en/latest/).
 ### Usage
 
 See examples in `examples` folder.
+
+### License
+
+Licensed under the GNU AGPL 3.0 license.
