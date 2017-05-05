@@ -62,7 +62,6 @@ elif not remote_python_status == 'CLOSED':
     gh2py_manager.__exit__(*sys.exc_info())
     lkd_modules = set()
     remote_python_status = 'CLOSED'
-    print lkd_modules
 
 # Change variable name because ghpython resets outputs to None before each run
 linked_modules = lkd_modules
