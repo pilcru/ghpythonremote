@@ -2,7 +2,9 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
-    <orderEntry type="jdk" jdkName="Python 2.7.12 (C:\tools\Anaconda3\envs\py27\python.exe)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="RhinoRemote" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="ab-compare" />
+    <orderEntry type="module" module-name="HamiltonElastica" />
   </component>
 </module>
