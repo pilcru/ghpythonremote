@@ -6,5 +6,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="ab-compare" />
     <orderEntry type="module" module-name="HamiltonElastica" />
+    <orderEntry type="module" module-name="ab-compare" />
   </component>
 </module>

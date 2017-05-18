@@ -118,7 +118,9 @@ class GrasshopperToPythonRemote:
 
     def _launch_python(self):
         python_call = '"{!s}" "{!s}"'.format(self.python_exe, self.rpyc_server_py)
-        python_popen = subprocess.Popen(python_call, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+        # TODO: Use a variable to define cwd
+        cwd = r"D:\Dropbox (MIT)\Pierre\CODE\abcompare"
+        python_popen = subprocess.Popen(python_call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, cwd=cwd)
         return python_popen
 
     def _get_connection(self):
