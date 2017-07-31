@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../HamiltonElastica/.idea/HamiltonElastica.iml" filepath="$PROJECT_DIR$/../HamiltonElastica/.idea/HamiltonElastica.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../abcompare/.idea/abcompare.iml" filepath="$PROJECT_DIR$/../abcompare/.idea/abcompare.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/ghpythonremote.iml" filepath="$PROJECT_DIR$/.idea/ghpythonremote.iml" />
     </modules>
   </component>

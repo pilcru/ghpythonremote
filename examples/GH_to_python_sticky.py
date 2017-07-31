@@ -9,10 +9,20 @@ from ghpythonremote.connectors import GrasshopperToPythonRemote
 from os import path
 from time import sleep
 
-logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
+local_log_level = getattr(logging, log_level, logging.WARNING)
+logger = logging.getLogger('ghpythonremote')
+logger.setLevel(local_log_level)
+ch = logging.StreamHandler()
+ch.setLevel(local_log_level)
+formatter = logging.Formatter('%(levelname)s: %(name)s:\n%(message)s')
+ch.setFormatter(formatter)
+logger.handlers = []
+logger.addHandler(ch)
+logger = logging.getLogger('ghpythonremote.GH_to_python_sticky')
 
 ROOT = path.abspath(path.dirname(inspect.getfile(ghpythonremote)))
-rpyc_server_py = path.join(ROOT, 'pythonservice.py')  # TODO: build this file on the fly
+rpyc_server_py = path.join(ROOT, 'pythonservice.py')
+
 # Set connection to CLOSED if this is the first run
 # and initialize set of linked modules
 try:
@@ -38,7 +48,8 @@ while remote_python_status == 'CONNECTING' or remote_python_status == 'CLOSING':
 if run:
     if not remote_python_status == 'OPEN':
         remote_python_status = 'CONNECTING'
-        gh2py_manager = GrasshopperToPythonRemote(rpyc_server_py, env_name=env_name, timeout=10)
+        gh2py_manager = GrasshopperToPythonRemote(rpyc_server_py, env_name=env_name, timeout=10,
+                                                  port=None, log_level=log_level, working_dir=working_dir)
         gh2py = gh2py_manager.__enter__()
         remote_python_status = 'OPEN'
 
@@ -66,4 +77,4 @@ elif not remote_python_status == 'CLOSED':
 # Change variable name because ghpython resets outputs to None before each run
 linked_modules = lkd_modules
 
-logging.info('GH to python connection is {}'.format(remote_python_status))
+logger.info('GH to python connection is {}'.format(remote_python_status))

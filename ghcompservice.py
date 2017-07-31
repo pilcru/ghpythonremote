@@ -1,3 +1,4 @@
+import sys
 import rpyc
 from rpyc.utils.server import OneShotServer
 
@@ -20,6 +21,10 @@ class GhcompService(rpyc.SlaveService):
 
 
 if __name__ == '__main__':
-    print('Starting server...')
-    server = OneShotServer(GhcompService, hostname='localhost', port=18871, listener_timeout=None)  # TODO: use nameserver to avoid relying on available ports
+    if len(sys.argv) >= 2:
+        port = sys.argv[1]
+    else:
+        port = 18871
+
+    server = OneShotServer(GhcompService, hostname='localhost', port=port, listener_timeout=None)  # TODO: use nameserver to avoid relying on available ports
     server.start()
