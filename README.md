@@ -21,4 +21,4 @@ See examples in `examples` folder.
 
 ### License
 
-Licensed under the GNU AGPL 3.0 license.
+Licensed under the MIT license.
