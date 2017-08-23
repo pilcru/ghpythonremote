@@ -15,7 +15,7 @@ def get_python_path(location=None):
         return get_python_from_path(location)
 
     try:
-        [method, env_name] = location.split('::')
+        [method, env_name] = location.split('://')
     except ValueError as e:
         logger.warning(
             'Location format for {!s} did not match expected format: "method::env_name"({!s}).\n'.format(
