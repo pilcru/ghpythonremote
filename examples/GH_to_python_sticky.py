@@ -48,7 +48,7 @@ while remote_python_status == 'CONNECTING' or remote_python_status == 'CLOSING':
 if run:
     if not remote_python_status == 'OPEN':
         remote_python_status = 'CONNECTING'
-        gh2py_manager = GrasshopperToPythonRemote(rpyc_server_py, env_name=env_name, timeout=10,
+        gh2py_manager = GrasshopperToPythonRemote(rpyc_server_py, location=location, timeout=10,
                                                   port=None, log_level=log_level, working_dir=working_dir)
         gh2py = gh2py_manager.__enter__()
         remote_python_status = 'OPEN'

@@ -4,21 +4,22 @@ import subprocess
 import errno
 import socket
 import logging
-import json
 import os
 import rpyc
 from time import sleep
+
+from .helpers import get_python_path
 
 logger = logging.getLogger('ghpythonremote.connectors')
 
 
 class GrasshopperToPythonRemote:
-    def __init__(self, rpyc_server_py, python_exe=None, env_name=None, timeout=60, max_retry=3,
+    def __init__(self, rpyc_server_py, python_exe=None, location=None, timeout=60, max_retry=3,
                  port=None, log_level=logging.WARNING, working_dir=None):
         if python_exe is None:
-            self.python_exe = self._get_python_path(env_name)
+            self.python_exe = get_python_path(location)
         else:
-            if env_name is not None:
+            if location is not None:
                 logger.debug('python_exe and env_name specified at the same time, ignoring env_name.')
             self.python_exe = python_exe
         self.rpyc_server_py = rpyc_server_py
@@ -88,55 +89,22 @@ class GrasshopperToPythonRemote:
             logger.info('Closing Python.')
             self.python_popen.terminate()
 
-    @staticmethod
-    def _get_python_path(env_name=None):
-        if env_name is not None:
-            try:
-                envs = json.loads(subprocess.check_output(["conda", "env", "list", "--json"]))['envs']
-            except OSError:
-                logger.warning('conda not found in your windows %PATH%, cannot fetch environment by name.\n'
-                                'Falling back to getting python path from windows %PATH%.')
-                return GrasshopperToPythonRemote._get_python_path()
-            env_dir = [path for path in envs if os.path.split(path)[-1] == env_name]
-            if len(env_dir) > 1:
-                logger.warning('Found several environments with target name; selecting first one.')
-
-            try:
-                python_exe = os.path.join(env_dir[0], 'python.exe')
-            except IndexError:
-                logger.warning('Environment {!s} was not found in your conda list of environments.\n'.format(env_name)
-                                + 'Falling back to getting python path from windows %PATH%.')
-                return GrasshopperToPythonRemote._get_python_path()
-
-            if os.path.isfile(python_exe) and os.access(python_exe, os.X_OK):
-                return python_exe
-            else:
-                logger.warning('No python executable found in environment directory {!s}.\n'.format(env_dir)
-                                + 'Falling back to getting python path from windows %PATH%.')
-                return GrasshopperToPythonRemote._get_python_path()
-        else:
-            try:
-                python_exe = subprocess.check_output(["where", "python"]).split('\n')[0].strip()
-                return python_exe
-            except (OSError, subprocess.CalledProcessError) as e:
-                logger.error("Unable to find a python installation in your windows %PATH%."
-                              "Are you running Windows with python accessible in your path?")
-                raise e
-
     def _launch_python(self):
         logger.debug('Using python executable: {!s}'.format(self.python_exe))
         logger.debug('Using rpyc_server module: {!s}'.format(self.rpyc_server_py))
         logger.debug('Using port: {}'.format(self.port))
         logger.debug('Using log_level: {!s}'.format(self.log_level))
         logger.debug('Using working_dir: {!s}'.format(self.working_dir))
-        assert(self.python_exe is not "" and self.python_exe is not None)
-        assert(self.rpyc_server_py is not "" and self.rpyc_server_py is not None)
-        assert(self.port is not "" and self.port is not None)
-        assert(self.log_level is not "" and self.log_level is not None)
+        assert (self.python_exe is not "" and self.python_exe is not None)
+        assert (self.rpyc_server_py is not "" and self.rpyc_server_py is not None)
+        assert (self.port is not "" and self.port is not None)
+        assert (self.log_level is not "" and self.log_level is not None)
         python_call = '"{!s}" "{!s}" "{}" "{!s}"'.format(
             self.python_exe, self.rpyc_server_py, self.port, self.log_level)
         cwd = self.working_dir
-        python_popen = subprocess.Popen(python_call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, cwd=cwd)
+        python_popen = subprocess.Popen(
+            python_call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, cwd=cwd
+        )
         return python_popen
 
     def _get_connection(self):
@@ -153,13 +121,21 @@ class GrasshopperToPythonRemote:
                     logger.debug("Connection ok, returning.")
                     logger.info("Connected.")
                     return connection
-            except (socket.error, rpyc.core.protocol.PingError, rpyc.core.async.AsyncResultTimeout) as e:
-                if e is socket.error and not e.errno == errno.ECONNREFUSED:
-                    raise
-                if i == self.timeout - 1:
-                    raise
-                elif e is socket.error:
-                    sleep(1)
+            except socket.error as e:
+                if self.python_popen.poll() is not None:
+                    raise RuntimeError(
+                        "Remote python {!s} failed on launch. ".format(self.python_exe)
+                        + "Does the remote python have rpyc installed?"
+                    )
+                if i == self.timeout - 1 or not e.errno == errno.ECONNREFUSED:
+                    raise RuntimeError(
+                        "Could not connect to remote python {!s}. ".format(self.python_exe)
+                        + "Does the remote python have rpyc installed?"
+                    )
+                sleep(1)
+            except (rpyc.core.protocol.PingError, rpyc.core.async.AsyncResultTimeout) as e:
+                logger.debug(str(e))
+                raise e
 
     def _rebuild_py_remote(self):
         if self.retry < self.max_retry:
@@ -258,7 +234,8 @@ class PythonToGrasshopperRemote:
 
     def run_gh_component(self, component_name, *nargs, **kwargs):
         """Run a specific Grasshopper component on the remote, with Rhino crash handling."""
-        is_cluster = kwargs.pop("is_cluster", False)  # TODO: improve ghcomp to get clusters the same way we get compiled components, thus removing the need for a custom getter
+        is_cluster = kwargs.pop("is_cluster",
+                                False)  # TODO: improve ghcomp to get clusters the same way we get compiled components, thus removing the need for a custom getter
         component = self.gh_remote_components(component_name, is_cluster=is_cluster)
         component_output = kwargs.pop("component_output", None)
 
@@ -309,9 +286,9 @@ class PythonToGrasshopperRemote:
         return os.path.join(rhino_path, 'Rhino.exe')
 
     def _launch_rhino(self):
-        assert(self.rhino_exe is not "" and self.rhino_exe is not None)
-        assert(self.rpyc_server_py is not "" and self.rpyc_server_py is not None)
-        assert(self.port is not "" and self.port is not None)
+        assert (self.rhino_exe is not "" and self.rhino_exe is not None)
+        assert (self.rpyc_server_py is not "" and self.rpyc_server_py is not None)
+        assert (self.port is not "" and self.port is not None)
         rhino_call = '"{!s}" /nosplash /notemplate /runscript="-_RunPythonScript ""{!s} {}"" -_Exit" "{!s}"'.format(
             self.rhino_exe, self.rpyc_server_py, self.port, (self.rhino_file_path or ''))
         rhino_popen = subprocess.Popen(rhino_call, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
