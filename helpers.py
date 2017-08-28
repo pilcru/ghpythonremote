@@ -18,7 +18,7 @@ def get_python_path(location=None):
         [method, env_name] = location.split('://')
     except ValueError as e:
         logger.warning(
-            'Location format for {!s} did not match expected format: "method::env_name"({!s}).\n'.format(
+            'Location format for {!s} did not match expected format: "method://env_name"({!s}).\n'.format(
                 location, e.message
             )
             + 'Falling back to getting python path from windows %PATH%.'
