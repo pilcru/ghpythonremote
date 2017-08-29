@@ -194,7 +194,7 @@ class PythonToGrasshopperRemote:
         else:
             self.rhino_exe = rhino_exe
         self.rhino_file_path = rhino_file_path
-        self.rpyc_server_py = rpyc_server_py  # TODO: Build one if not passed in
+        self.rpyc_server_py = rpyc_server_py
         self.timeout = timeout
         self.retry = 0
         self.max_retry = max(0, max_retry)

@@ -26,5 +26,5 @@ if __name__ == '__main__':
     else:
         port = 18871
 
-    server = OneShotServer(GhcompService, hostname='localhost', port=port, listener_timeout=None)  # TODO: use nameserver to avoid relying on available ports
+    server = OneShotServer(GhcompService, hostname='localhost', port=port, listener_timeout=None)
     server.start()

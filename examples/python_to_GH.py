@@ -8,7 +8,6 @@ logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
 
 # TODO: This could be made a console script in setup.py, with some additional config
 if __name__ == '__main__':
-    # TODO: Use pkg_resources for a cleaner way to load files
     ROOT = path.abspath(path.dirname(inspect.getfile(ghpythonremote)))
     rhino_file_path = path.join(ROOT, 'examples', 'curves.3dm')
     rpyc_server_py = path.join(ROOT, 'ghcompservice.py')

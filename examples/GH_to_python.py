@@ -1,9 +1,7 @@
 import sys
 import scriptcontext
-# TODO: Check if this work without installing IronPython on computer.
 import logging
 import inspect
-# TODO: Automatically add this to the path for gh python
 import ghpythonremote
 from ghpythonremote.connectors import GrasshopperToPythonRemote
 from os import path
@@ -20,7 +18,6 @@ logger.handlers = []
 logger.addHandler(ch)
 logger = logging.getLogger('ghpythonremote.GH_to_python_sticky')
 
-# TODO: Use pkg_resources for a cleaner way to load files
 ROOT = path.abspath(path.dirname(inspect.getfile(ghpythonremote)))
 rpyc_server_py = path.join(ROOT, 'pythonservice.py')
 

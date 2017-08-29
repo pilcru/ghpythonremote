@@ -41,5 +41,5 @@ if __name__ == '__main__':
     logger = logging.getLogger('ghpythonremote.pythonservice')
     logger.info('Starting server...')
     server = OneShotServer(PythonService, hostname='localhost', port=port, listener_timeout=None,
-                           logger=logger)  # TODO: use nameserver to avoid relying on available ports
+                           logger=logger)
     server.start()
