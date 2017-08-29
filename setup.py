@@ -1,112 +1,80 @@
-"""'GH Python Remote is a package to get Rhinoceros3D/Grasshopper and Python to collaborate better:
-connect an external python instance to Grasshopper, and vice-versa.
-https://github.com/Digital-Structures/ghpythonremote
-"""
-
-# Always prefer setuptools over distutils
-from setuptools import setup, find_packages
+from setuptools import setup
 # To use a consistent encoding
 from codecs import open
 from os import path
+import sys
+
+if sys.version_info[0] > 2:
+    sys.exit("Incompatible with Python 3. IronPython 2.7 from Rhino can only be connected to a Python 2 instance.")
 
 here = path.abspath(path.dirname(__file__))
+
+# Default version
+__version__ = '0.1.0'
+# Get __version__, __version_info__
+execfile(path.join(here, 'ghpythonremote', 'version.py'))
 
 # Get the long description from the README file
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='ghpythonremote',
-
-    # Versions should comply with PEP440.  For a discussion on single-sourcing
-    # the version across setup.py and the project code, see
-    # https://packaging.python.org/en/latest/single_source_version.html
-    version='1.0.0',
-
+    name='gh-python-remote',
     description=('GH Python Remote is a package to get Rhinoceros3D/Grasshopper and Python to collaborate better: '
-               + 'connect an external python instance to Grasshopper, and vice-versa.'),
+                 + 'connect an external python instance to Grasshopper, and vice-versa.'),
     long_description=long_description,
+    version=__version__,
 
-    # The project's main homepage.
-    url='https://github.com/Digital-Structures/ghpythonremote',
-
-    # Author details
     author='Pierre Cuvilliers',
     author_email='pcuvil@mit.edu',
+    url='https://github.com/Digital-Structures/ghpythonremote',
 
-    # Choose your license
     license='MIT',
 
-    # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
-        # How mature is this project? Common values are
-        #   3 - Alpha
-        #   4 - Beta
-        #   5 - Production/Stable
         'Development Status :: 5 - Production/Stable',
 
-        # Indicate who your project is intended for
         'Intended Audience :: Developers',
         'Intended Audience :: Designers',
         'Topic :: Software Development :: Interpreters',
         'Topic :: Scientific/Engineering',
 
-        # Pick your license as you wish (should match "license" above)
         'License :: OSI Approved :: MIT License',
 
-        # Specify the Python versions you support here. In particular, ensure
-        # that you indicate whether you support Python 2, Python 3 or both.
         'Programming Language :: Python :: 2 :: Only',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: IronPython',
     ],
-
-    # What does your project relate to?
     keywords='CAD design engineering scientific numpy scipy IronPython Rhinoceros3D',
 
-    # You can just specify the packages manually here if your project is
-    # simple. Or you can use find_packages().
-    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+    python_requires='~=2.6',
+    platforms=["Windows", ],
+    zip_safe=False,
 
-    # Alternatively, if you want to distribute just a my_module.py, uncomment
-    # this:
-    #   py_modules=["my_module"],
+    use_2to3=False,
 
-    # List run-time dependencies here.  These will be installed by pip when
-    # your project is installed. For an analysis of "install_requires" vs pip's
-    # requirements files see:
-    # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['rpyc', ],
+    packages=['ghpythonremote', ],
+    package_data={
+    },
+    data_files=[
+        ('build', ['build/GhPythonRemote.ghcluster']),
+        ('examples', ['examples/curves.3dm',
+                      'examples/GH_python_remote.ghx',
+                      'examples/GH_to_python.py',
+                      'examples/python_to_GH.py']),
+        ('', ['LICENSE.txt', 'SoftwareCodeDisclosure.md'])
+    ],
 
-    # List additional groups of dependencies here (e.g. development
-    # dependencies). You can install these using the following syntax,
-    # for example:
-    # $ pip install -e .[dev,test]
+    install_requires=['rpyc>=3', ],
     extras_require={
         'dev': ['check-manifest'],
         'test': ['coverage'],
     },
 
-    # If there are data files included in your packages that need to be
-    # installed, specify them here.  If using Python 2.6 or less, then these
-    # have to be included in MANIFEST.in as well.
-    package_data={
-        'cluster': ['build/GHPythonRemote.ghcluster'],
-    },
-
-    # Although 'package_data' is the preferred approach, in some case you may
-    # need to place data files outside of your packages. See:
-    # http://docs.python.org/3.4/distutils/setupscript.html#installing-additional-files # noqa
-    # In this case, 'data_file' will be installed into '<sys.prefix>/my_data'
-    # data_files=[('my_data', ['data/data_file'])],
-
-    # To provide executable scripts, use entry points in preference to the
-    # "scripts" keyword. Entry points provide cross-platform support and allow
-    # pip to create the appropriate form of executable for the target platform.
-    entry_points={
-        'console_scripts': [
-            'ghpythonremote=examples.python_to_GH:main',
-        ],
-    },
+    # entry_points={
+    #     'console_scripts': [
+    #         'ghpythonremote=examples.python_to_GH:main',
+    #     ],
+    # },
 )

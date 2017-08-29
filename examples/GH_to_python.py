@@ -20,6 +20,7 @@ logger.handlers = []
 logger.addHandler(ch)
 logger = logging.getLogger('ghpythonremote.GH_to_python_sticky')
 
+# TODO: Use pkg_resources for a cleaner way to load files
 ROOT = path.abspath(path.dirname(inspect.getfile(ghpythonremote)))
 rpyc_server_py = path.join(ROOT, 'pythonservice.py')
 
