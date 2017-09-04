@@ -71,3 +71,52 @@ def get_python_from_conda_env(env_name):
         logger.warning('Environment {!s} was not found in your conda list of environments.\n'.format(env_name)
                        + 'Falling back to getting python path from windows %PATH%.')
         return get_python_from_windows_path()
+
+
+def get_rhino_ironpython_path(location=None):
+    if location is None or location == '':
+        return get_ironpython_from_appdata()
+
+    if os.path.isdir(location):
+        logger.debug('Directly using IronPython lib folder at {!s}'.format(location))
+        return get_ironpython_from_path(location)
+
+    logger.warning('Path {!s} is not a directory or does not exist.\n'.format(location)
+                   + 'Falling back to getting IronPython lib folder path from windows %APPDATA%.')
+    return get_ironpython_from_appdata()
+
+
+def get_ironpython_from_appdata():
+    appdata_path = os.getenv('APPDATA', '')
+    ironpython_settings_path = os.path.join(appdata_path, 'McNeel', 'Rhinoceros', '5.0', 'Plug-ins',
+                                            'IronPython (814d908a-e25c-493d-97e9-ee3861957f49)', 'settings')
+    ghpython_version_path = os.path.join(ironpython_settings_path, 'ghpy_version.txt')
+    ironpython_lib_path = os.path.join(ironpython_settings_path, 'lib')
+
+    ghpython_version_tuple = ()
+    with open(ghpython_version_path) as ghpython_version:
+        ghpython_version_tuple = ghpython_version.readline().split('.')
+    if ghpython_version_tuple is ():
+        logger.warning('No ghpy_version.txt file installation found in {!s}.\n'.format(ironpython_settings_path)
+                       + 'Was it installed and opened in Grasshopper at least once on this machine?')
+    elif ghpython_version_tuple < (0, 6, 0, 3):
+        logger.warning(
+            'ghpy_version.txt indicates obsolete version {!s}.\n'.format('.'.join(ghpython_version_tuple))
+            + 'Please install version 0.6.0.3 or superior from http://www.food4rhino.com/app/ghpython')
+    logger.info('Found ghpython version {!s} in {!s}'.format('.'.join(ghpython_version_tuple),
+                                                             ironpython_settings_path))
+
+    if not os.path.isdir(ironpython_lib_path):
+        logger.error('IronPython lib directory for Rhinoceros not found in {!s}.\n'.format(ironpython_settings_path)
+                     + 'Please provide a full path to one of the folders in your IronPython for Rhinoceros path.\n'
+                     + 'These folders are listed in the settings of the window opened with the command '
+                     + '`_EditPythonScript` in Rhinoceros')
+        raise RuntimeError('No IronPython lib folder found in %APPDATA%')
+    logger.info('Found IronPython lib folder {!s}'.format(ironpython_lib_path))
+
+    return ironpython_lib_path
+
+
+def get_ironpython_from_path(location):
+    logger.debug('Using IronPython lib folder provided {!s}'.format(location))
+    return location
