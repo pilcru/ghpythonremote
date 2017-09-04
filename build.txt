@@ -8,4 +8,10 @@ python setup.py bdist_wheel  # Will build for platform & current python version
 username=pilcru
 password=<pass>
 
+# twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 twine upload dist/*
+
+# pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple your-package
+pip install ghpythonremote
+pip install rpyc --target=,
+               '--upgrade', '--no-binary :all:', '--no-compile', '--ignore-requires-python']
