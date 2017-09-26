@@ -48,7 +48,7 @@ setup(
     ],
     keywords='CAD design engineering scientific numpy scipy IronPython Rhinoceros3D',
 
-    python_requires='~=2.6',
+    python_requires='>=2.6,<3',
     platforms=["Windows", ],
     zip_safe=False,
 
@@ -58,8 +58,8 @@ setup(
     package_data={
     },
     data_files=[
-        ('build', ['build/GhPythonRemote.ghcluster']),
-        ('examples', ['examples/curves.3dm',
+        ('examples', ['examples/GHPythonRemote.ghcluster',
+                      'examples/curves.3dm',
                       'examples/GH_python_remote.ghx',
                       'examples/GH_to_python.py',
                       'examples/python_to_GH.py']),
