@@ -35,7 +35,7 @@ setup(
         'Development Status :: 5 - Production/Stable',
 
         'Intended Audience :: Developers',
-        'Intended Audience :: Designers',
+        'Intended Audience :: End Users/Desktop',
         'Topic :: Software Development :: Interpreters',
         'Topic :: Scientific/Engineering',
 

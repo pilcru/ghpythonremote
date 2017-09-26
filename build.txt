@@ -1,17 +1,29 @@
 # https://packaging.python.org/tutorials/distributing-packages/#packaging-your-project
 activate rhinoremote
 python setup.py clean
+pytohn setup.py sdist
 python setup.py bdist_wheel  # Will build for platform & current python version
 
 # file ~/.pypirc
-[pypi]
-username=pilcru
-password=<pass>
+[distutils]
+index-servers=
+    pypi
+    testpypi
 
-# twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+[pypi]
+username:pilcru
+password:<pass>
+
+[testpypi]
+repository:https://test.pypi.org/legacy/
+username:pilcru
+password:2=gUju:_}@"43
+
+
+# twine upload -r testpypi dist/*
 twine upload dist/*
 
-# pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple your-package
+# pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple ghpythonremote
 pip install ghpythonremote
 pip install rpyc --target=,
                '--upgrade', '--no-binary :all:', '--no-compile', '--ignore-requires-python']
