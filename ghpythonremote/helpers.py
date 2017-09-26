@@ -93,18 +93,25 @@ def get_ironpython_from_appdata():
     ghpython_version_path = os.path.join(ironpython_settings_path, 'ghpy_version.txt')
     ironpython_lib_path = os.path.join(ironpython_settings_path, 'lib')
 
-    ghpython_version_tuple = ()
-    with open(ghpython_version_path) as ghpython_version:
-        ghpython_version_tuple = ghpython_version.readline().split('.')
-    if ghpython_version_tuple is ():
+    if os.path.isfile(ghpython_version_path):
+        with open(ghpython_version_path) as ghpython_version:
+            ghpython_version_list = ghpython_version.readline().split('.')
+        try:
+            ghpython_version_tuple = tuple(int(x) for x in ghpython_version_list)
+            if ghpython_version_tuple < (0, 6, 0, 3):
+                logger.warning(
+                    'ghpy_version.txt indicates obsolete version {!s}.\n'.format('.'.join(ghpython_version_tuple))
+                    + 'Please install version 0.6.0.3 or superior from http://www.food4rhino.com/app/ghpython')
+            logger.info('Found ghpython version {!s} in {!s}'.format('.'.join(ghpython_version_tuple),
+                                                                     ironpython_settings_path))
+        except ValueError:
+            logger.warning(
+                'Could not parse ghpy_version.txt file installation found in {!s}.\n'.format(ironpython_settings_path)
+                + 'Was ghpython installed and opened in Grasshopper at least once on this machine?'
+            )
+    else:
         logger.warning('No ghpy_version.txt file installation found in {!s}.\n'.format(ironpython_settings_path)
-                       + 'Was it installed and opened in Grasshopper at least once on this machine?')
-    elif ghpython_version_tuple < (0, 6, 0, 3):
-        logger.warning(
-            'ghpy_version.txt indicates obsolete version {!s}.\n'.format('.'.join(ghpython_version_tuple))
-            + 'Please install version 0.6.0.3 or superior from http://www.food4rhino.com/app/ghpython')
-    logger.info('Found ghpython version {!s} in {!s}'.format('.'.join(ghpython_version_tuple),
-                                                             ironpython_settings_path))
+                       + 'Was ghpython installed and opened in Grasshopper at least once on this machine?')
 
     if not os.path.isdir(ironpython_lib_path):
         logger.error('IronPython lib directory for Rhinoceros not found in {!s}.\n'.format(ironpython_settings_path)
