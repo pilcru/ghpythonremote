@@ -100,9 +100,9 @@ def get_ironpython_from_appdata():
             ghpython_version_tuple = tuple(int(x) for x in ghpython_version_list)
             if ghpython_version_tuple < (0, 6, 0, 3):
                 logger.warning(
-                    'ghpy_version.txt indicates obsolete version {!s}.\n'.format('.'.join(ghpython_version_tuple))
+                    'ghpy_version.txt indicates obsolete version {!s}.\n'.format('.'.join(ghpython_version_list))
                     + 'Please install version 0.6.0.3 or superior from http://www.food4rhino.com/app/ghpython')
-            logger.info('Found ghpython version {!s} in {!s}'.format('.'.join(ghpython_version_tuple),
+            logger.info('Found ghpython version {!s} in {!s}'.format('.'.join(ghpython_version_list),
                                                                      ironpython_settings_path))
         except ValueError:
             logger.warning(
