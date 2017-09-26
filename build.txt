@@ -1,7 +1,7 @@
 # https://packaging.python.org/tutorials/distributing-packages/#packaging-your-project
 activate rhinoremote
 python setup.py clean
-pytohn setup.py sdist
+python setup.py sdist
 python setup.py bdist_wheel  # Will build for platform & current python version
 
 # file ~/.pypirc
