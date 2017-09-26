@@ -1,9 +1,0 @@
-# Include the license files
-include LICENSE.txt
-include SoftwareCodeDisclosure.md
-
-# Include the examples files
-recursive-include examples *
-
-# Include the cluster
-include examples/GHPythonRemote.ghcluster
