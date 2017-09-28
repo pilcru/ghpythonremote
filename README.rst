@@ -44,8 +44,8 @@ From the Windows command line (or the special Anaconda or Python command if pip 
 
 .. code-block:: bash
 
-    pip install gh-python-remote
-    python -m ghpythonremote._configure_ironpython_installation
+   pip install gh-python-remote
+   python -m ghpythonremote._configure_ironpython_installation
 
 The first line installs gh-python-remote in the current Python interpreter. The second tries to find your Rhinoceros
 IronPython installation, and install gh-python-remote there.
@@ -77,10 +77,10 @@ From Grasshopper to Python
 #. In the GHPython component, the imported modules will be available via the sticky dictionary. For example if you are
    trying to use Numpy:
 
-    .. code-block:: python
+   .. code-block:: python
 
-        import scriptcontext
-        np = scriptcontext.sticky['numpy']
+      import scriptcontext
+      np = scriptcontext.sticky['numpy']
 
 #. Done!
 
