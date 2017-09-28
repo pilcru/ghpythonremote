@@ -45,7 +45,7 @@ if __name__ == '__main__':
             'examples/python_to_GH.py',
         ]),
         ('', [
-            'examples/GHPythonRemote.ghcluster',
+            'ghcluster/GHPythonRemote.ghuser',
         ])
     ]
     for copy_pair in copy_pairs:

@@ -25,5 +25,4 @@ twine upload dist/*
 
 # pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple ghpythonremote
 pip install ghpythonremote
-pip install rpyc --target=,
-               '--upgrade', '--no-binary :all:', '--no-compile', '--ignore-requires-python']
+python

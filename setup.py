@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 # To use a consistent encoding
 from codecs import open
-from os import path, getenv
+from os import path
 import sys
 
 if sys.version_info[0] > 2:
@@ -54,21 +54,17 @@ setup(
 
     use_2to3=False,
 
-    packages=['ghpythonremote', ],
+    packages=find_packages(),
     package_data={
-    },
-    data_files=[
-        ('Lib/site-packages/ghpythonremote/examples', [
-            'examples/GHPythonRemote.ghcluster',
+        'ghpythonremote': [
             'examples/curves.3dm',
             'examples/GH_python_remote.ghx',
             'examples/GH_to_python.py',
             'examples/python_to_GH.py',
-        ]),
-        ('Lib/site-packages/ghpythonremote', [
-            'LICENSE.txt',
-            'SoftwareCodeDisclosure.md',
-        ])
+            'ghcluster/GHPythonRemote.ghuser',
+        ],
+    },
+    data_files=[
     ],
 
     install_requires=['rpyc>=3', ],
@@ -76,10 +72,4 @@ setup(
         'dev': ['check-manifest'],
         'test': ['coverage'],
     },
-
-    # entry_points={
-    #     'console_scripts': [
-    #         'ghpythonremote=examples.python_to_GH:main',
-    #     ],
-    # },
 )
