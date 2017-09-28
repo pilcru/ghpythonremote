@@ -13,8 +13,9 @@ gh-python-remote
 Installation
 ************
 
-| Requires a Python 2.7 installation, not compatible with Python 3. Python 2.6 might work but is not supported.
-| Uses `rpyc`_ for the connection backend (automatically installed).
+Requires a Python 2.7 installation, not compatible with Python 3. Python 2.6 might work but is not supported.
+
+Uses `rpyc`_ for the connection backend (automatically installed).
 
 1. Install the software dependencies:
 -------------------------------------
