@@ -67,14 +67,14 @@ From Grasshopper to Python
 
 #. Open the example file ``GH_python_remote.ghx`` in Python, or drop the gh-python-remote component on the canvas.
 #. Use the ``location`` input to define the location of the Python interpreter you want to connect to. You can use
-    the path to a folder containing python, the full path to a python executable, or ``conda://`` followed by the name
-    of an Anaconda virtual environment.
+   the path to a folder containing python, the full path to a python executable, or ``conda://`` followed by the name
+   of an Anaconda virtual environment.
 #. Use the ``modules`` input to define the modules you want to access in the GHPython component. Anything that can
-    follow an ``import`` statement in the remote Python works. If you need to import a submodule inside a package
-    (like ``import this.that``), the parent package has to be imported first.
+   follow an ``import`` statement in the remote Python works. If you need to import a submodule inside a package
+   (like ``import this.that``), the parent package has to be imported first.
 #. Change ``run`` to ``True`` to connect.
 #. In the GHPython component, the imported modules will be available via the sticky dictionary. For example if you are
-    trying to use Numpy:
+   trying to use Numpy:
 
     .. code-block:: python
 
