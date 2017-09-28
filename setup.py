@@ -59,6 +59,7 @@ setup(
         'ghpythonremote': [
             'examples/curves.3dm',
             'examples/GH_python_remote.ghx',
+            'examples/GH_python_remote_plt_example.ghx',
             'examples/GH_to_python.py',
             'examples/python_to_GH.py',
             'ghcluster/GHPythonRemote.ghuser',
