@@ -15,7 +15,7 @@ if __name__ == '__main__':
     rhino_ironpython_path = get_rhino_ironpython_path(location=location)
 
     # Install the package to Rhino IronPython Users lib
-    package_name = __package__.split('.')[0]
+    package_name = 'gh-python-remote'
     pip_cmd = ['install', '--upgrade', '--target="' + rhino_ironpython_path + '"',
                '--no-binary=:all:', '--no-compile', '--ignore-requires-python',
                package_name, ]
