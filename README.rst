@@ -6,7 +6,7 @@ gh-python-remote
 | This lets you run any Python package directly from Grasshopper, including numpy and scipy!
 
 .. image:: https://raw.githubusercontent.com/Digital-Structures/ghpythonremote/master/ghpythonremote/examples/GH_python_remote_plt.png
-   :width: 500px
+   :width: 900px
    :align: center
 
 ************
