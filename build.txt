@@ -21,7 +21,11 @@ password:2=gUju:_}@"43
 
 
 # twine upload -r testpypi dist/*
-twine upload dist/*
+#   ^                                                              ^
+#  /!\  UPLOAD sdist first, otw pypi does not format README.rst!  /!\
+# -----                                                          -----
+twine upload dist/*1.0.3*.gz
+twine upload dist/*1.0.3*.whl
 
 # pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple ghpythonremote
 pip install ghpythonremote
