@@ -3,6 +3,7 @@
 
 *.html
 *.pdf
+!ghpythonremote_README.pdf
 
 ### Python template
 # Byte-compiled / optimized / DLL files
