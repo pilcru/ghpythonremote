@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
     # Install the package to Rhino IronPython Users lib
     package_name = 'gh-python-remote'
-    pip_cmd = ['install', '--upgrade', '--target="' + rhino_ironpython_path + '"',
+    pip_cmd = ['install', '--upgrade', '--target=' + rhino_ironpython_path,
                '--no-binary=:all:', '--no-compile', '--ignore-requires-python',
                package_name, ]
     print('\n\nThis will install ghpythonremote in Rhino IronPython with the command:')
