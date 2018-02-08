@@ -148,9 +148,10 @@ class GrasshopperToPythonRemote:
             self.python_popen = self._launch_python()
             self.connection = self._get_connection()
         else:
-            logger.error(
-                "Lost Rhino connection, and attempts limit ({:d}) reached. Exiting.".format(self.max_retry))
-            raise
+            raise RuntimeError(
+                "Lost connection to Python, and reconnection attempts limit ({:d}) reached. Exiting.".format(
+                    self.max_retry)
+            )
 
 
 class PythonToGrasshopperRemote:
@@ -328,9 +329,10 @@ class PythonToGrasshopperRemote:
             self.connection = self._get_connection()
             self.gh_remote_components = self.connection.root.get_component
         else:
-            logger.error(
-                "Lost Rhino connection, and attempts limit ({:d}) reached. Exiting.".format(self.max_retry))
-            raise
+            raise RuntimeError(
+                "Lost connection to Rhino, and reconnection attempts limit ({:d}) reached. Exiting.".format(
+                    self.max_retry)
+            )
 
 
 def _get_free_tcp_port():
