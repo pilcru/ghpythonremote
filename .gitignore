@@ -109,6 +109,11 @@ ENV/
 .idea/**/tasks.xml
 .idea/dictionaries
 
+# Markdown-navigator
+.idea/markdown-navigator/
+.idea/markdown-navigator.xml
+.idea/markdown-exported-files.xml
+
 # Sensitive or high-churn files:
 .idea/**/dataSources/
 .idea/**/dataSources.ids
