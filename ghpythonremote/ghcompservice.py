@@ -21,10 +21,8 @@ class GhcompService(rpyc.SlaveService):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) >= 2:
-        port = sys.argv[1]
-    else:
-        port = 18871
+    import rhinoscriptsyntax as rs
+    port = rs.GetInteger("Server bind port", 18871, 1023, 65535)
 
     server = OneShotServer(GhcompService, hostname='localhost', port=port, listener_timeout=None)
     server.start()

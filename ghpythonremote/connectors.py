@@ -290,7 +290,7 @@ class PythonToGrasshopperRemote:
         assert (self.rhino_exe is not "" and self.rhino_exe is not None)
         assert (self.rpyc_server_py is not "" and self.rpyc_server_py is not None)
         assert (self.port is not "" and self.port is not None)
-        rhino_call = '"{!s}" /nosplash /notemplate /runscript="-_RunPythonScript ""{!s} {}"" -_Exit" "{!s}"'.format(
+        rhino_call = '"{!s}" /nosplash /notemplate /runscript="-_RunPythonScript ""{!s}"" {!s} -_Exit " "{!s}"'.format(
             self.rhino_exe, self.rpyc_server_py, self.port, (self.rhino_file_path or ''))
         rhino_popen = subprocess.Popen(rhino_call, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
         return rhino_popen
