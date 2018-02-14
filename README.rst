@@ -86,6 +86,57 @@ From Grasshopper to Python
 
 #. Done!
 
+Notes
+^^^^^
+
+Creating remote array-like objects from large local lists can be slow. For example, ``np.array(range(10000))`` takes
+more than 10 seconds on most computers. To solve this, you need to send the list first to the remote Python
+interpreter, then create the array from this remote object:
+
+   .. code-block:: python
+
+      import scriptcontext as rc
+      import rpyc
+      np = sc.sticky['numpy']
+      rpy = sc.sticky['rpy']
+
+      r_range = rpyc.utils.classic.deliver(rpy, range(10000))
+      np.array(r_range)
+
+There is also an issue that Grasshopper does not recognize remote list objects as lists. They need to be recovered to
+the local interpreter first:
+
+   .. code-block:: python
+
+      import scriptcontext as rc
+      import rpyc
+      from ghpythonlib.treehelpers import list_to_tree # Rhino 6 only!
+      np = sc.sticky['numpy']
+
+      a = np.arange(15).reshape((3,5))
+      a = rpyc.utils.classic.obtain(a.tolist())
+      a = list_to_tree(a, source=[0,0])
+
+``ghpythonlib.treehelpers`` is Rhino 6 only, see the `treehelpers gist`_ for an equivalent implementation:
+
+   .. code-block:: python
+
+      def list_to_tree(input, none_and_holes=True, source=[0]):
+          """Transforms nestings of lists or tuples to a Grasshopper DataTree"""
+          from Grasshopper import DataTree as Tree
+          from Grasshopper.Kernel.Data import GH_Path as Path
+          from System import Array
+          def proc(input,tree,track):
+              path = Path(Array[int](track))
+              if len(input) == 0 and none_and_holes: tree.EnsurePath(path); return
+              for i,item in enumerate(input):
+                  if hasattr(item, '__iter__'): #if list or tuple
+                      track.append(i); proc(item,tree,track); track.pop()
+                  else:
+                      if none_and_holes: tree.Insert(item,path,i)
+                      elif item is not None: tree.Add(item,path)
+          if input is not None: t=Tree[object]();proc(input,t,source[:]);return t
+
 Quick-ref:
 ^^^^^^^^^^
 
@@ -139,4 +190,5 @@ Licensed under the `MIT license`_.
 .. _Grasshopper: https://www.rhino3d.com/download/grasshopper/1.0/wip/rc
 .. _GH Python: http://www.food4rhino.com/app/ghpython#downloads_list
 .. _github repo: https://github.com/Digital-Structures/ghpythonremote/tree/master/ghpythonremote/examples
+.. _treehelpers gist: https://gist.github.com/piac/ef91ac83cb5ee92a1294
 .. _MIT License: https://github.com/Digital-Structures/ghpythonremote/blob/master/LICENSE.txt
