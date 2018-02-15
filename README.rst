@@ -5,15 +5,13 @@ gh-python-remote
 | Connect an external python instance to Grasshopper, and vice-versa.
 | This lets you run any Python package directly from Grasshopper, including numpy and scipy!
 
-.. image:: https://raw.githubusercontent.com/Digital-Structures/ghpythonremote/master/ghpythonremote/examples/GH_python_remote_plt.png
+.. image:: https://raw.githubusercontent.com/Digital-Structures/ghpythonremote/9d6773fbc0cc31cc042b5622aadd607716e952f7/GH_python_remote_plt.png
    :width: 900px
    :align: center
 
 ************
 Installation
 ************
-
-.. _test.exe: `Installation`_
 
 Requires a Python 2.7 installation, not compatible with Python 3. Python 2.6 might work but is not supported.
 

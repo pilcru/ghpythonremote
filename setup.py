@@ -68,7 +68,12 @@ setup(
     data_files=[
     ],
 
-    install_requires=['git+git://github.com/tomerfiliba/rpyc.git@e97f860c3af1b8950a691665af02447e6faf3b70#egg=rpyc', ],
+    install_requires=[
+        'rpyc>=3'
+    ],
+    dependency_links=[
+        'git+ssh://git@github.com/tomerfiliba/rpyc.git@e97f860c3af1b8950a691665af02447e6faf3b70#egg=rpyc',
+    ],
     extras_require={
         'dev': ['check-manifest'],
         'test': ['coverage'],
