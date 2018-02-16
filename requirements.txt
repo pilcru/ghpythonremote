@@ -1,1 +1,1 @@
-git+git://github.com/pilcru/rpyc.git@v3.4.5#egg=rpyc
+git+git://github.com/pilcru/rpyc.git@v3.4.5#egg=rpyc>=3.4.5
