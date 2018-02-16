@@ -3,14 +3,14 @@ import rpyc
 from rpyc.utils.server import OneShotServer
 
 
-class GhcompService(rpyc.SlaveService):
-    def on_connect(self):
+class GhcompService(rpyc.ClassicService):
+    def on_connect(self, conn):
         print('Incoming connection.')
-        super(GhcompService, self).on_connect()
+        super(GhcompService, self).on_connect(conn)
         import ghpythonlib.components as ghcomp
         self.ghcomp = ghcomp
 
-    def on_disconnect(self):
+    def on_disconnect(self, conn):
         print('Disconnected.')
 
     def exposed_get_component(self, component_name, is_cluster_component=False):

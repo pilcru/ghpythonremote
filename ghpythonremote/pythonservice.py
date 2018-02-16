@@ -4,12 +4,12 @@ import rpyc
 from rpyc.utils.server import OneShotServer
 
 
-class PythonService(rpyc.SlaveService):
-    def on_connect(self):
+class PythonService(rpyc.ClassicService):
+    def on_connect(self, conn):
         logger.info('Incoming connection.')
-        super(PythonService, self).on_connect()
+        super(PythonService, self).on_connect(conn)
 
-    def on_disconnect(self):
+    def on_disconnect(self, conn):
         logger.info('Disconnected.')
 
 
