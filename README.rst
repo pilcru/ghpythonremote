@@ -44,11 +44,12 @@ From the Windows command line (or the special Anaconda or Python command if pip 
 
 .. code-block:: bash
 
-   pip install gh-python-remote
+   pip install gh-python-remote --upgrade --process-dependency-links --no-binary=:all:
    python -m ghpythonremote._configure_ironpython_installation
 
 The first line installs gh-python-remote in the current Python interpreter. The second tries to find your Rhinoceros
-IronPython installation, and install gh-python-remote there.
+IronPython installation, and install gh-python-remote there. The extra options are necessary to be able to get the
+pre-release version of rpyc.
 
 If you do not use the standard Rhinoceros IronPython installation
 (``%APPDATA%\McNeel\Rhinoceros\5.0\Plug-ins\IronPython (814d908a-e25c-493d-97e9-ee3861957f49)\settings``), you can
@@ -93,7 +94,7 @@ interpreter, then create the array from this remote object:
 
    .. code-block:: python
 
-      import scriptcontext as rc
+      import scriptcontext as sc
       import rpyc
       np = sc.sticky['numpy']
       rpy = sc.sticky['rpy']
@@ -106,7 +107,7 @@ the local interpreter first:
 
    .. code-block:: python
 
-      import scriptcontext as rc
+      import scriptcontext as sc
       import rpyc
       from ghpythonlib.treehelpers import list_to_tree # Rhino 6 only!
       np = sc.sticky['numpy']
@@ -166,6 +167,8 @@ Quick-ref:
         Console output with DEBUG information.
     :linked_modules (string list):
         list of imported module names.
+    :rpy (rpyc connection object):
+        The object representing the remote Python interpreter.
     :import_statements (string):
         what to use in the GHPython component to actually use the imported modules.
 
