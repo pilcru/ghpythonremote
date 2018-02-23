@@ -72,7 +72,7 @@ setup(
         'rpyc>=3.4.5'
     ],
     dependency_links=[
-        'git+https://github.com/pilcru/rpyc.git@v3.4.5#egg=rpyc-3.4.5',
+        'https://github.com/pilcru/rpyc/archive/v3.4.5.tar.gz#egg=rpyc-3.4.5',
     ],
     extras_require={
         'dev': ['check-manifest'],

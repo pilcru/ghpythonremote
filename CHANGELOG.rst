@@ -2,6 +2,13 @@
 Changelog
 *********
 
+1.1.2 (2018-02-23)
+------------------
+
+Fix
+^^^
+- Use https file location for the dependencies, to remove the need for git when installing.
+
 1.1.0 (2018-02-14)
 ------------------
 
