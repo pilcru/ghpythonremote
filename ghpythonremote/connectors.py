@@ -133,7 +133,7 @@ class GrasshopperToPythonRemote:
                         + "Does the remote python have rpyc installed?"
                     )
                 sleep(1)
-            except (rpyc.core.protocol.PingError, rpyc.core.async.AsyncResultTimeout) as e:
+            except (rpyc.core.protocol.PingError, rpyc.core.async_.AsyncResultTimeout) as e:
                 logger.debug(str(e))
                 raise e
 
@@ -309,7 +309,7 @@ class PythonToGrasshopperRemote:
                     logger.debug("Connection ok, returning.")
                     logger.info("Connected.")
                     return connection
-            except (socket.error, rpyc.core.protocol.PingError, rpyc.core.async.AsyncResultTimeout) as e:
+            except (socket.error, rpyc.core.protocol.PingError, rpyc.core.async_.AsyncResultTimeout) as e:
                 if e is socket.error and not e.errno == errno.ECONNREFUSED:
                     raise
                 if i == self.timeout - 1:
