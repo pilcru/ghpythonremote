@@ -69,10 +69,10 @@ setup(
     ],
 
     install_requires=[
-        'rpyc>=3.4.5'
+        'rpyc>=3.4.6'
     ],
     dependency_links=[
-        'https://github.com/pilcru/rpyc/archive/v3.4.5.tar.gz#egg=rpyc-3.4.5',
+        'https://github.com/pilcru/rpyc/archive/v3.4.6.tar.gz#egg=rpyc-3.4.6',
     ],
     extras_require={
         'dev': ['check-manifest'],
