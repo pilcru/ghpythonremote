@@ -2,6 +2,14 @@
 Changelog
 *********
 
+1.1.3 (2018-02-27)
+------------------
+
+Fix
+^^^
+- Rename ``async`` import from rpyc to ``async_``.
+- Bump rpyc version to pilcru/rpyc@3.4.6 to fix IronPython 2.7.0 dump bytes issues.
+
 1.1.2 (2018-02-23)
 ------------------
 
