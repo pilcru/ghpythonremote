@@ -6,5 +6,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="ab-compare" />
     <orderEntry type="module" module-name="ab-compare" />
+    <orderEntry type="module" module-name="rpyc" />
   </component>
 </module>
