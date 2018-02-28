@@ -13,7 +13,7 @@ class GhcompService(rpyc.ClassicService):
     def on_disconnect(self, conn):
         print('Disconnected.')
 
-    def exposed_get_component(self, component_name, is_cluster_component=False):
+    def get_component(self, component_name, is_cluster_component=False):
         component = getattr(self.ghcomp, component_name)
         if is_cluster_component:
             component = getattr(component, component_name)  # TODO: improve ghcomp to get clusters the same way we get compiled components, thus removing the need for a custom getter
