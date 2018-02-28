@@ -2,6 +2,13 @@
 Changelog
 *********
 
+1.1.4 (2018-02-28)
+------------------
+
+Fix
+^^^
+- Stop using the `exposed` prefix to remote attributes, per rpyc v4.
+
 1.1.3 (2018-02-27)
 ------------------
 
