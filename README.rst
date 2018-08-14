@@ -26,7 +26,7 @@ Uses `rpyc`_ for the connection backend (automatically installed).
     the next paragraph.
 :Python `virtual environment`_ (optional):
     isolate dependencies for each project by creating a new virtual environment. If you use Anaconda,
-    ``conda env --name rhinoremote --python=2.7`` will set you up with a new virtual environment named ``rhinoremote``.
+    ``conda create --name rhinoremote python=2.7 numpy scipy`` will set you up with a new virtual environment named ``rhinoremote``, and install numpy and scipy in it.
 :`Rhinoceros3D`_:
     version 5 is the only one supported by gh-python-remote, no other version works.
 :`Grasshopper`_:
