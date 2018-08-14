@@ -52,7 +52,7 @@ IronPython installation, and install gh-python-remote there. The extra options a
 pre-release version of rpyc.
 
 If you do not use the standard Rhinoceros IronPython installation
-(``%APPDATA%\McNeel\Rhinoceros\5.0\Plug-ins\IronPython (814d908a-e25c-493d-97e9-ee3861957f49)\settings``), you can
+(``%APPDATA%\McNeel\Rhinoceros\5.0\Plug-ins\IronPython (814d908a-e25c-493d-97e9-ee3861957f49)\settings\lib``), you can
 specify a target directory to use like so: ``python -m ghpythonremote._configure_ironpython_installation "location"``.
 
 This will also install the gh-python-remote UserObject in Grasshopper.
