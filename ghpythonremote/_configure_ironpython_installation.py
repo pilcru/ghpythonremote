@@ -22,7 +22,12 @@ if __name__ == '__main__':
                package_name, ]
     print('\n\nThis will install ghpythonremote in Rhino IronPython with the command:')
     print('pip ' + ' '.join(pip_cmd))
-    pip.main(pip_cmd)
+    #Check for pip version, over 9 there is no main
+    if  int(pip.__version__.split('.')[0]) > 9:
+        from pip._internal import main as pipmain
+        pipmain(pip_cmd)
+    else:
+        pip.main(pip_cmd)
 
     # Get the Grasshopper libraries base dir
     gh_userobjects_path = os.path.join(os.getenv('APPDATA', ''), 'Grasshopper', 'UserObjects')
