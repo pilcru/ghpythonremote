@@ -2,6 +2,24 @@
 Changelog
 *********
 
+1.1.5 (2019-07-02)
+------------------
+
+New
+^^^
+- Installation instructions for Rhino 6
+
+Changes
+^^^^^^^
+- Revert using a special RPyC distribution, now explicitly using upstream
+- Upgrade to RPyC 4.1.0
+
+Fix
+^^^
+- Repair pip install command on recent pip with pip.main deprecated
+- Repair incompatibilities with RPyC 4.1.0, using monkey-patched compatibilty fixes for IronPython
+- Remove unnecessary pip install parameters
+
 1.1.4 (2018-02-28)
 ------------------
 
