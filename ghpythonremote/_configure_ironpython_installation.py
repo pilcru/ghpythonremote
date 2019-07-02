@@ -34,7 +34,7 @@ if __name__ == '__main__':
         dest_dir_path = os.path.join(gh_userobjects_path, package_name)
     else:
         logging.warning('Could not find Grasshopper "UserObjects" special folder; '
-                        + 'example files will be installed to deafult temp dir.')
+                        + 'example files will be installed to default temp dir.')
         dest_dir_path = os.path.join(os.getenv('TEMP', 'C:\\'), package_name)
     # Get the filepath in the installed package
     source_dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -46,6 +46,7 @@ if __name__ == '__main__':
         ('examples', [
             'examples/curves.3dm',
             'examples/GH_python_remote.ghx',
+            'examples/IronPython_to_CPython.py'
             'examples/GH_to_python.py',
             'examples/python_to_GH.py',
         ]),
