@@ -1,1 +1,1 @@
-https://github.com/pilcru/rpyc/archive/v3.4.5.tar.gz#egg=rpyc>=3.4.5
+rpyc>=4.1.0
