@@ -23,7 +23,6 @@ if __name__ == '__main__':
     pip_cmd = [sys.executable, '-m', 'pip', 'install', '--upgrade',
                '--target=' + rhino_ironpython_path,
                '--no-binary=:all:', '--no-compile', '--ignore-requires-python',
-               '--process-dependency-links',
                package_name, ]
     print('\n\nThis will install ghpythonremote in Rhino IronPython with the command:')
     print(' '.join(pip_cmd))

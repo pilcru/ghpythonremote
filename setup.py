@@ -67,12 +67,8 @@ setup(
     },
     data_files=[
     ],
-
     install_requires=[
         'rpyc>=4.1.0'
-    ],
-    dependency_links=[
-        'https://github.com/pilcru/rpyc/archive/v3.4.6.tar.gz#egg=rpyc-3.4.6',
     ],
     extras_require={
         'dev': ['check-manifest'],
