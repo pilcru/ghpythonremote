@@ -81,15 +81,30 @@ def get_rhino_ironpython_path(location=None):
         logger.debug('Directly using IronPython lib folder at {!s}'.format(location))
         return get_ironpython_from_path(location)
 
+    if type(location) == int:
+        logger.debug('Looking for IronPython installation of Rhino version {!s}'.format(location))
+        return get_ironpython_from_appdata(location)
+
     logger.warning('Path {!s} is not a directory or does not exist.\n'.format(location)
                    + 'Falling back to getting IronPython lib folder path from windows %APPDATA%.')
     return get_ironpython_from_appdata()
 
 
-def get_ironpython_from_appdata():
+DEFAULT_RHINO_VERSION = 6
+
+
+def get_ironpython_from_appdata(rhino_version=DEFAULT_RHINO_VERSION):
     appdata_path = os.getenv('APPDATA', '')
-    ironpython_settings_path = os.path.join(appdata_path, 'McNeel', 'Rhinoceros', '5.0', 'Plug-ins',
-                                            'IronPython (814d908a-e25c-493d-97e9-ee3861957f49)', 'settings')
+    if rhino_version == 6:
+        ironpython_settings_path = os.path.join(appdata_path, 'McNeel', 'Rhinoceros', '6.0', 'Plug-ins',
+                                                'IronPython (814d908a-e25c-493d-97e9-ee3861957f49)', 'settings')
+    elif rhino_version == 5:
+        ironpython_settings_path = os.path.join(appdata_path, 'McNeel', 'Rhinoceros', '5.0', 'Plug-ins',
+                                                'IronPython (814d908a-e25c-493d-97e9-ee3861957f49)', 'settings')
+    else:
+        logger.warning(
+            'Unknown Rhino version "{!s}". Defaulting to Rhino {!s}.'.format(rhino_version, DEFAULT_RHINO_VERSION))
+        return get_ironpython_from_appdata()
     ghpython_version_path = os.path.join(ironpython_settings_path, 'ghpy_version.txt')
     ironpython_lib_path = os.path.join(ironpython_settings_path, 'lib')
 

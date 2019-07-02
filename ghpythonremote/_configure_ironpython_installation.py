@@ -11,6 +11,10 @@ if __name__ == '__main__':
     location = None
     if len(sys.argv) > 1:
         location = sys.argv[1]
+        try:
+            location = int(location)
+        except ValueError:
+            pass
 
     rhino_ironpython_path = get_rhino_ironpython_path(location=location)
 
