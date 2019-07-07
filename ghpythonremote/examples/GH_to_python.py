@@ -54,6 +54,7 @@ if run:
     # Stuff that we can reach
     rpymod = gh2py.py_remote_modules  # A getter function for a named python module
     rpy = gh2py.connection  # Represents the remote instance root object
+    scriptcontext.sticky['rpy'] = rpy
     # Add modules
     for mod in modules:
         try:
@@ -68,6 +69,7 @@ elif not remote_python_status == 'CLOSED':
     # Remove linked modules
     for mod in lkd_modules:
         del scriptcontext.sticky[mod]
+    del scriptcontext.sticky['rpy']
     gh2py_manager.__exit__(*sys.exc_info())
     lkd_modules = set()
     remote_python_status = 'CLOSED'

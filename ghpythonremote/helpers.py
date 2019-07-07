@@ -140,5 +140,4 @@ def get_ironpython_from_appdata(rhino_version=DEFAULT_RHINO_VERSION):
 
 
 def get_ironpython_from_path(location):
-    logger.debug('Using IronPython lib folder provided {!s}'.format(location))
     return location
