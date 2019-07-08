@@ -46,7 +46,7 @@ if __name__ == '__main__':
         ('examples', [
             'examples/curves.3dm',
             'examples/GH_python_remote.ghx',
-            'examples/IronPython_to_CPython.py'
+            'examples/IronPython_to_CPython.py',
             'examples/GH_to_python.py',
             'examples/python_to_GH.py',
         ]),
