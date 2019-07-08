@@ -7,20 +7,21 @@ Changelog
 
 New
 ^^^
-- Now fully compatible with Rhino 6
+- Now fully compatible with Rhino 6.
 
 Changes
 ^^^^^^^
-- Revert using a special RPyC distribution, now explicitly using upstream
-- Upgrade to RPyC 4.1.0
+- Revert using a special RPyC distribution, now explicitly using upstream.
+- Upgrade to RPyC 4.1.0.
 - Hide rpyc behind a special ghpythonremote import. ``rpyc.utils`` functions ``deliver`` and ``obtain`` are available as ``ghpythonremote.deliver`` and ``ghpythonremote.obtain``; ``rpyc`` should be imported with ``from ghpythonremote import rpyc`` if ever needed.
+- Expand the environment path in CPython subprocess, trying to match what conda would do, helping Numpy finds its DLLs.
 
 Fix
 ^^^
-- Repair pip install command on recent pip with pip.main deprecated
-- Repair incompatibilities with IronPython 2.7.0
-- Repair incompatibilities with RPyC 4.1.0, using monkey-patched compatibilty fixes for IronPython
-- Remove unnecessary pip install parameters
+- Repair pip install command on recent pip with pip.main deprecated.
+- Repair incompatibilities with IronPython 2.7.0.
+- Repair incompatibilities with RPyC 4.1.0, using monkey-patched compatibilty fixes for IronPython.
+- Remove unnecessary pip install parameters.
 
 1.1.4 (2018-02-28)
 ------------------

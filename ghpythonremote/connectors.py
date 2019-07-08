@@ -8,7 +8,7 @@ import os
 from ghpythonremote import rpyc
 from time import sleep
 
-from .helpers import get_python_path
+from .helpers import get_python_path, get_extended_env_path_conda
 
 logger = logging.getLogger('ghpythonremote.connectors')
 
@@ -22,6 +22,7 @@ class GrasshopperToPythonRemote:
             if location is not None:
                 logger.debug('python_exe and env_name specified at the same time, ignoring env_name.')
             self.python_exe = python_exe
+        self.env = get_extended_env_path_conda(self.python_exe)
         self.rpyc_server_py = rpyc_server_py
         self.timeout = timeout
         self.retry = 0
@@ -103,7 +104,7 @@ class GrasshopperToPythonRemote:
             self.python_exe, self.rpyc_server_py, self.port, self.log_level)
         cwd = self.working_dir
         python_popen = subprocess.Popen(
-            python_call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, cwd=cwd
+            python_call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, cwd=cwd, env=self.env
         )
         return python_popen
 

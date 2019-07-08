@@ -33,6 +33,7 @@ def get_python_path(location=None):
 
 
 def get_python_from_path(path):
+    path = os.path.normpath(os.path.realpath(path))
     if os.path.isdir(path):
         path = os.path.join(path, 'python.exe')
     if os.path.isfile(path) and os.access(path, os.X_OK):
@@ -72,6 +73,21 @@ def get_python_from_conda_env(env_name):
                        + ' ' * 9 + 'Falling back to getting python path from windows %PATH%.\n')
         return get_python_from_windows_path()
 
+
+def get_extended_env_path_conda(python_exe):
+    # Conda stores useful DLLs in these paths, add them to the path like they would be by conda activate
+    new_env = os.environ.copy()
+    conda_folders = [
+        '',
+        '/Library/mingw-w64/bin',
+        '/Library/usr/bin',
+        '/Library/bin',
+        '/Scripts',
+        '/bin',
+    ]
+    add_path = [os.path.normpath(os.path.dirname(python_exe) + folder) for folder in conda_folders]
+    new_env["PATH"] = os.pathsep.join(add_path) + os.pathsep + new_env["PATH"]
+    return new_env
 
 def get_rhino_ironpython_path(location=None):
     if location is None or location == '':
