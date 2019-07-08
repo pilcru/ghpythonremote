@@ -60,11 +60,6 @@ setup(
 
     packages=find_packages(),
     package_data={
-        '': [
-            'LICENSE.txt',
-            'README.rst',
-            'CHANGELOG.rst',
-        ],
         'ghpythonremote': [
             'examples/curves.3dm',
             'examples/GH_python_remote.ghx',
@@ -76,6 +71,7 @@ setup(
     },
     data_files=[
     ],
+    include_package_data=True,
     install_requires=[
         'rpyc>=4.1.0'
     ],
