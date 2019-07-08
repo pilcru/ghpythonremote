@@ -2,12 +2,12 @@
 Changelog
 *********
 
-1.1.5 (2019-07-02)
+1.2.0 (2019-07-07)
 ------------------
 
 New
 ^^^
-- Installation instructions for Rhino 6
+- Now fully compatible with Rhino 6
 
 Changes
 ^^^^^^^
@@ -17,6 +17,7 @@ Changes
 Fix
 ^^^
 - Repair pip install command on recent pip with pip.main deprecated
+- Repair incompatibilities with IronPython 2.7.0
 - Repair incompatibilities with RPyC 4.1.0, using monkey-patched compatibilty fixes for IronPython
 - Remove unnecessary pip install parameters
 
