@@ -23,6 +23,7 @@ setup(
     description=('GH Python Remote is a package to get Rhinoceros3D/Grasshopper and Python to collaborate better: '
                  + 'connect an external python instance to Grasshopper, and vice-versa.'),
     long_description=long_description,
+    long_description_content_type='text/x-rst',
     version=__version__,
 
     author='Pierre Cuvilliers',
