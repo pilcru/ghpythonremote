@@ -19,7 +19,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 # Append the CHANGELOG to it
 with open(path.join(here, 'CHANGELOG.rst'), encoding='utf-8') as f:
-    long_description += '\n\n' + f.read()
+    long_description += '\n\n====\n\n' + f.read()
 
 setup(
     name='gh-python-remote',
