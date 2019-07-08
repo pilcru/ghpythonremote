@@ -683,7 +683,7 @@ github.com/pilcru/ghpythonremote</item>
 assigns imported modules to scriptcontext.sticky variables.
 
 Arguments:
-      code (str): Path to the GH_to_python_sticky.py code file.
+      code (str): Path to the GH_to_python.py code file.
       location (str): Path to a python executable, or to a folder
             containing `python.exe`, or the name of a conda-created
             virtual environment prefixed by `conda://` (`conda://env_name`).

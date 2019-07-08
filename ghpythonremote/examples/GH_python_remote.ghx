@@ -378,7 +378,7 @@ formatter = logging.Formatter('%(levelname)s: %(name)s:\n%(message)s')
 ch.setFormatter(formatter)
 logger.handlers = []
 logger.addHandler(ch)
-logger = logging.getLogger('ghpythonremote.GH_to_python_sticky')
+logger = logging.getLogger('ghpythonremote.GH_to_python')
 
 ROOT = path.abspath(path.dirname(inspect.getfile(ghpythonremote)))
 rpyc_server_py = path.join(ROOT, 'pythonservice.py')
@@ -1411,7 +1411,7 @@ rhino_doc_dir = path.abspath(path.dirname(sc.doc.Path))</item>
 assigns imported modules to scriptcontext.sticky variables.
 
 Arguments:
-      code (str): Path to the GH_to_python_sticky.py code file.
+      code (str): Path to the GH_to_python.py code file.
       location (str): Path to a python executable, or to a folder
             containing `python.exe`, or the name of a conda-created
             virtual environment prefixed by `conda://` (`conda://env_name`).

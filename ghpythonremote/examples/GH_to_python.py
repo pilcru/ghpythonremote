@@ -16,7 +16,7 @@ formatter = logging.Formatter('%(levelname)s: %(name)s:\n%(message)s')
 ch.setFormatter(formatter)
 logger.handlers = []
 logger.addHandler(ch)
-logger = logging.getLogger('ghpythonremote.GH_to_python_sticky')
+logger = logging.getLogger('ghpythonremote.GH_to_python')
 
 ROOT = path.abspath(path.dirname(inspect.getfile(ghpythonremote)))
 rpyc_server_py = path.join(ROOT, 'pythonservice.py')
