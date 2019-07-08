@@ -147,13 +147,13 @@ print(a)
 print(np.linalg.eig(np.arange(9).reshape(3, 3)))
 
 # Fast way of sending data for numpy array creation
-remote_range = rpyc.utils.classic.deliver(rpy, range(1000))
+remote_range = ghpythonremote.deliver(rpy, range(1000))
 array = np.array(remote_range)
 # This is much slower
 #b = np.array(range(1000))
 
 # Get the array back as a local IronPython list
-list = rpyc.utils.classic.obtain(array.tolist())
+list = ghpythonremote.obtain(array.tolist())
 
 # Get an error
 #np.arange(9).reshape(4,3)
@@ -168,9 +168,9 @@ assert(x == z)
 x = ("he", 7, u"llo", 8, (), 900, None, True, 18.2, 18.2j + 13,
      slice(1,2,3), frozenset([5,6,7]), range(10))
 print(x)
-rx = rpyc.utils.classic.deliver(rpy, x)
+rx = ghpythonremote.deliver(rpy, x)
 print(rx)
-lrx = rpyc.utils.classic.obtain(rx)
+lrx = ghpythonremote.obtain(rx)
 print(lrx)
 
 assert(x == lrx)

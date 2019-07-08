@@ -13,6 +13,7 @@ Changes
 ^^^^^^^
 - Revert using a special RPyC distribution, now explicitly using upstream
 - Upgrade to RPyC 4.1.0
+- Hide rpyc behind a special ghpythonremote import. ``rpyc.utils`` functions ``deliver`` and ``obtain`` are available as ``ghpythonremote.deliver`` and ``ghpythonremote.obtain``; ``rpyc`` should be imported with ``from ghpythonremote import rpyc`` if ever needed.
 
 Fix
 ^^^

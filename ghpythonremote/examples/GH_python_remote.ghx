@@ -245,13 +245,13 @@ print(a)
 print(np.linalg.eig(np.arange(9).reshape(3, 3)))
 
 # Fast way of sending data for numpy array creation
-remote_range = rpyc.utils.classic.deliver(rpy, range(1000))
+remote_range = ghpythonremote.deliver(rpy, range(1000))
 array = np.array(remote_range)
 # This is much slower
 #b = np.array(range(1000))
 
 # Get the array back as a local IronPython list
-list = rpyc.utils.classic.obtain(array.tolist())
+list = ghpythonremote.obtain(array.tolist())
 
 # Get an error
 #np.arange(9).reshape(4,3)</item>
