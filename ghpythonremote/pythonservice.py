@@ -1,6 +1,6 @@
 import logging
 import sys
-import rpyc
+from ghpythonremote import rpyc
 from rpyc.utils.server import OneShotServer
 
 

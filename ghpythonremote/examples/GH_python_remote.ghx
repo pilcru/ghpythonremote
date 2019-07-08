@@ -236,7 +236,7 @@ numpy.linalg</item>
                 <chunk name="Container">
                   <items count="9">
                     <item name="CodeInput" type_name="gh_string" type_code="10">import scriptcontext
-import rpyc
+import ghpythonremote
 np = scriptcontext.sticky['numpy']
 rpy = scriptcontext.sticky['rpy']
 # Do some numpy stuff

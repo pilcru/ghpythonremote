@@ -5,7 +5,7 @@ import errno
 import socket
 import logging
 import os
-import rpyc
+from ghpythonremote import rpyc
 from time import sleep
 
 from .helpers import get_python_path

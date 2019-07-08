@@ -138,7 +138,7 @@ a += "\n\n&gt;&gt;&gt; ...matplotlib code...\n&gt;&gt;&gt; plt.show()"
 plt.show()
 
 import scriptcontext
-import rpyc
+import ghpythonremote
 np = scriptcontext.sticky['numpy']
 rpy = scriptcontext.sticky['rpy']
 # Do some numpy stuff

@@ -108,11 +108,11 @@ Creating remote array-like objects from large local lists is slow. For example, 
 .. code-block:: python
 
   import scriptcontext as sc
-  import rpyc
+  import ghpythonremote
   np = sc.sticky['numpy']
   rpy = sc.sticky['rpy']
 
-  r_range = rpyc.utils.classic.deliver(rpy, range(10000))
+  r_range = ghpythonremote.deliver(rpy, range(10000))
   np.array(r_range)
 
 Additionally, Grasshopper does not recognize remote list objects as lists. They need to be recovered to the local interpreter first:
@@ -120,12 +120,12 @@ Additionally, Grasshopper does not recognize remote list objects as lists. They 
 .. code-block:: python
 
   import scriptcontext as sc
-  import rpyc
+  import ghpythonremote
   from ghpythonlib.treehelpers import list_to_tree  # Rhino 6 only!
   np = sc.sticky['numpy']
 
   a = np.arange(15).reshape((3,5))
-  a = rpyc.utils.classic.obtain(a.tolist())
+  a = ghpythonremote.obtain(a.tolist())
   a = list_to_tree(a, source=[0,0])
 
 
