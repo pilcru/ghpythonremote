@@ -60,6 +60,11 @@ setup(
 
     packages=find_packages(),
     package_data={
+        '': [
+            'LICENSE.txt',
+            'README.rst',
+            'CHANGELOG.rst',
+        ],
         'ghpythonremote': [
             'examples/curves.3dm',
             'examples/GH_python_remote.ghx',
