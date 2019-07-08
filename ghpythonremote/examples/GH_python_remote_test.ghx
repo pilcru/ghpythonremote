@@ -101,6 +101,11 @@
 np = scriptcontext.sticky['numpy']
 mpl = scriptcontext.sticky['matplotlib']
 
+plt = mpl.pyplot
+
+# The following is fixed when the conda paths are added to
+# the CPython subprocess:
+
 # Qt doesn't find its bearings, for some reason
 # so we switch to another backend.
 # This might be fixed by copying the qt.conf file 
@@ -111,10 +116,8 @@ mpl = scriptcontext.sticky['matplotlib']
 # up other installs. Doing it for this application only
 # is equally annoying because it has to be done before
 # matplotlib is imported.
-
-# mpl.use('TKAgg')  # Maybe works for matplotlib &gt;= 3.1.0
-plt = mpl.pyplot
-plt.switch_backend('TKAgg')
+# # mpl.use('TKAgg')  # Maybe works for matplotlib &gt;= 3.1.0
+# plt.switch_backend('TKAgg')
 
 
 b = np.random.random((5,5))
