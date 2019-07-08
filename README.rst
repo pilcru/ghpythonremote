@@ -13,47 +13,69 @@ gh-python-remote
 Installation
 ************
 
-Requires a Python 2.7 installation, not compatible with Python 3. Python 2.6 might work but is not supported.
+Requires a Python 2.7 installation, not compatible with Python 3. Python 2.6 might work but is not supported. Currently Windows only.
 
 Uses `rpyc`_ for the connection backend (automatically installed).
 
 1. Install the software dependencies:
 -------------------------------------
 
+Before installing gh-python-remote in Rhino 6, you will need to install Python 2, Rhino 6, and open Grasshopper in Rhino 6 at least once.
+
+Before installing gh-python-remote in Rhino 5, you will need to install Python 2, Rhino 5, Grasshopper and GHPython, and drop the GHPython component on the Grasshopper canvas in Rhino 5 at least once.
+
+More details and recommendations below:
+
 :Python 2.7 (2.6 might work too):
-    gh-python-remote was developed with the `Anaconda`_ distribution in mind (comes with numpy and scipy included),
-    but anything else works. If you already have Anaconda installed with Python 3, do not reinstall, instead just read
-    the next paragraph.
+    gh-python-remote was developed with the `Anaconda`_ distribution in mind (comes with numpy and scipy included), but anything else works. If you already have Anaconda installed with Python 3, do not reinstall, instead just read the next paragraph.
+
+    If you want to be able to name virtual environments in gh-python-remote by their conda name, select "Add conda to my PATH" when prompted during Anaconda's installation.
 :Python `virtual environment`_ (optional):
-    isolate dependencies for each project by creating a new virtual environment. If you use Anaconda,
-    ``conda create --name rhinoremote python=2.7 numpy scipy`` will set you up with a new virtual environment named ``rhinoremote``, and install numpy and scipy in it.
+    isolate dependencies for each project by creating a new virtual environment.
+
+    If you use Anaconda, open the Windows command prompt (or the Anaconda prompt if you chose not to add conda to your PATH) and type:
+
+    .. code-block:: bash
+
+       conda create --name rhinoremote python=2.7 numpy scipy
+
+    This will set you up with a new virtual environment named ``rhinoremote``, and install numpy and scipy in it.
 :`Rhinoceros3D`_:
-    version 5 is the only one supported by gh-python-remote, no other version works.
+    version 5 and 6 on Windows are supported. Rhino 6 for Mac might be supported in a later release.
 :`Grasshopper`_:
-    version 0.9.0076 is supported by gh-python-remote. Version 0.9.0061 and up might work as well. **Open it at least
-    once before continuing.**
+    On Rhino 6, the version included with the current service release is supported. On Rhino 5, version 0.9.0076 is supported by gh-python-remote. Version 0.9.0061 and up might work as well.
+
+    **Open it at least once before continuing.**
 :`GH Python`_:
-    version 0.6.0.3 works best, older versions are buggy with gh-python-remote. **Drop it on the Grasshopper canvas at
-    least once before continuing.**
+    On Rhino 6, the version included with the current service release is supported. On Rhino 5, version 0.6.0.3 works best, older versions are buggy with gh-python-remote.
+
+    **On Rhino 5, drop it on the Grasshopper canvas at least once before continuing.**
 
 2. Install gh-python-remote:
 --------------------------------
 
-From the Windows command line (or the special Anaconda or Python command if pip is not in your path by default), run:
-*(If you are using a virtual environment, remember to* ``activate`` *it first.)*
+From the Windows command prompt (or the special Anaconda or Python prompt if pip is not in your path by default), run:
+
+*(If you are using a virtual environment, remember to* **activate** *it first. With the conda virtual environment from above, you would need to run* ``conda activate rhinoremote`` *in the Anaconda prompt)*
 
 .. code-block:: bash
 
-   pip install gh-python-remote --upgrade --process-dependency-links --no-binary=:all:
+   pip install gh-python-remote --upgrade --no-binary=:all:
    python -m ghpythonremote._configure_ironpython_installation
 
-The first line installs gh-python-remote in the current Python interpreter. The second tries to find your Rhinoceros
-IronPython installation, and install gh-python-remote there. The extra options are necessary to be able to get the
-pre-release version of rpyc.
+The first line installs gh-python-remote in the current Python interpreter. The second tries to find your Rhinoceros IronPython installation, and install gh-python-remote there. The ``--no-binary`` option is necessary to make sure the installed files will be readable by IronPython.
 
-If you do not use the standard Rhinoceros IronPython installation
-(``%APPDATA%\McNeel\Rhinoceros\5.0\Plug-ins\IronPython (814d908a-e25c-493d-97e9-ee3861957f49)\settings\lib``), you can
-specify a target directory to use like so: ``python -m ghpythonremote._configure_ironpython_installation "location"``.
+By default, the second line will install gh-python-remote for Rhino 6, in the standard Rhinoceros IronPython user directory. To install for a different Rhino version, specify it as an integer argument (only 5 and 6 are currently supported). For example, for Rhino 5:
+
+.. code-block:: bash
+
+   python -m ghpythonremote._configure_ironpython_installation 5
+
+If you do not use the standard Rhinoceros IronPython installation, or if you want to install for an unsupported version of Rhino, you can specify a target directory like so: ``python -m ghpythonremote._configure_ironpython_installation "location"``. For example, for Rhino 7:
+
+.. code-block:: bash
+
+   python -m ghpythonremote._configure_ironpython_installation "%APPDATA%\McNeel\Rhinoceros\7.0\Plug-ins\IronPython (814d908a-e25c-493d-97e9-ee3861957f49)\settings\lib"
 
 This will also install the gh-python-remote UserObject in Grasshopper.
 
@@ -61,22 +83,16 @@ This will also install the gh-python-remote UserObject in Grasshopper.
 Usage
 *****
 
-*All the examples files are copied in the* ``%APPDATA%\Grasshopper\UserObjects\gh-python-remote\examples`` *folder.
-You can also download them from the* `github repo`_.
+*All the examples files are copied in the* ``%APPDATA%\Grasshopper\UserObjects\gh-python-remote\examples`` *folder. You can also download them from the* `github repo`_.
 
 From Grasshopper to Python
 --------------------------
 
 #. Open the example file ``GH_python_remote.ghx`` in Python, or drop the gh-python-remote component on the canvas.
-#. Use the ``location`` input to define the location of the Python interpreter you want to connect to. You can use
-   the path to a folder containing python, the full path to a python executable, or ``conda://`` followed by the name
-   of an Anaconda virtual environment.
-#. Use the ``modules`` input to define the modules you want to access in the GHPython component. Anything that can
-   follow an ``import`` statement in the remote Python works. If you need to import a submodule inside a package
-   (like ``import this.that``), the parent package has to be imported first.
+#. Use the ``location`` input to define the location of the Python interpreter you want to connect to. You can use the path to a folder containing python, the full path to a python executable, or ``conda://`` followed by the name of an Anaconda virtual environment (requires ``conda`` to be available in your PATH).
+#. Use the ``modules`` input to define the modules you want to access in the GHPython component. Anything that can follow an ``import`` statement in the remote Python works. If you need to import a submodule inside a package (like ``import this.that``), the parent package has to be imported first.
 #. Change ``run`` to ``True`` to connect.
-#. In the GHPython component, the imported modules will be available via the sticky dictionary. For example if you are
-   trying to use Numpy:
+#. In the GHPython component, the imported modules will be available via the sticky dictionary. For example if you are trying to use Numpy:
 
    .. code-block:: python
 
@@ -88,9 +104,7 @@ From Grasshopper to Python
 Notes
 ^^^^^
 
-Creating remote array-like objects from large local lists can be slow. For example, ``np.array(range(10000))`` takes
-more than 10 seconds on most computers. To solve this, you need to send the list first to the remote Python
-interpreter, then create the array from this remote object:
+Creating remote array-like objects from large local lists can be slow. For example, ``np.array(range(10000))`` takes more than 10 seconds on most computers. To solve this, you need to first send the list to the remote interpreter, then create the array from this remote object:
 
    .. code-block:: python
 
@@ -102,14 +116,13 @@ interpreter, then create the array from this remote object:
       r_range = rpyc.utils.classic.deliver(rpy, range(10000))
       np.array(r_range)
 
-There is also an issue that Grasshopper does not recognize remote list objects as lists. They need to be recovered to
-the local interpreter first:
+Additionally, Grasshopper does not recognize remote list objects as lists. They need to be recovered to the local interpreter first:
 
    .. code-block:: python
 
       import scriptcontext as sc
       import rpyc
-      from ghpythonlib.treehelpers import list_to_tree # Rhino 6 only!
+      from ghpythonlib.treehelpers import list_to_tree  # Rhino 6 only!
       np = sc.sticky['numpy']
 
       a = np.arange(15).reshape((3,5))
@@ -140,23 +153,17 @@ the local interpreter first:
 Quick-ref:
 ^^^^^^^^^^
 
-**\*** *marks an input that is only available by editing the gh-python-remote UserObject, or in*
-``GH_python_remote.ghx``.
+**\*** *marks an input that is only available by editing the gh-python-remote UserObject, or in* ``GH_python_remote.ghx``.
 
 :Arguments:
     :\*code (string):
-        Path to the ``GH_to_python_sticky.py`` code file.
+        Path to the ``GH_to_python.py`` code file.
     :location (string):
-        Path to a python executable, or to a folder containing ``python.exe``, or the name of a conda-created virtual
-        environment prefixed by ``conda://`` (``conda://env_name``). If empty, finds python from your windows
-        ``%PATH%``.
+        Path to a python executable, or to a folder containing ``python.exe``, or the name of a conda-created virtual environment prefixed by ``conda://`` (``conda://env_name``, requires ``conda`` available in your PATH). If empty, finds python from your windows ``%PATH%``.
     :run (boolean):
-        Creates the connection, and imports new modules, when turned to True. Kills the connection, and deletes the
-        references to the imports, when turned to False.
+        Creates the connection, and imports new modules, when turned to True. Kills the connection, and deletes the references to the imports, when turned to False.
     :modules (string list):
-        List of module names to import in the remote python. They will be added to the ``scriptcontext.sticky``
-        dictionary, allowing them to be reused from other python components in the same Grasshopper document.
-        Submodules (for example ``numpy.linalg`` have to be added explicitly to this list to be available later.
+        List of module names to import in the remote python. They will be added to the ``scriptcontext.sticky`` dictionary, allowing them to be reused from other python components in the same Grasshopper document. Submodules (for example ``numpy.linalg``) have to be added explicitly to this list to be available later, and importing the parent package is also required even if only the submodule is used.
     :\*log_level (string from ['NOTSET', 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']):
         Logging level to use for the local IronPython and the remote python instance.
     :\*working_dir (string):
@@ -166,18 +173,17 @@ Quick-ref:
     :out (string):
         Console output with DEBUG information.
     :linked_modules (string list):
-        list of imported module names.
+        List of imported module names.
     :rpy (rpyc connection object):
         The object representing the remote Python interpreter.
     :import_statements (string):
-        what to use in the GHPython component to actually use the imported modules.
+        What to use in the GHPython component to actually use the imported modules.
 
 
 From Python to Grasshopper
 --------------------------
 
-You can also use gh-python-remote to programmatically control a Rhinoceros instance, and connect to it via Python.
-Have a look at ``examples/python_to_GH.py`` for a full working example.
+You can also use gh-python-remote to programmatically control a Rhinoceros instance, and connect to it via Python. Have a look at ``examples/python_to_GH.py`` for a full working example.
 
 *******
 License

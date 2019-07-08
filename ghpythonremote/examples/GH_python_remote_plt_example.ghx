@@ -591,8 +591,9 @@ Arguments:
             scriptcontext.sticky dictionary, allowing them to be
             reused from other python components in the same
             Grasshopper document. Submodules (for example
-            `numpy.linalg` have to be added explicitly to this list
-            to be available later.
+            `numpy.linalg`) have to be added explicitly to this list
+            to be available later, and importing the parent package is
+            also required even if only the submodule is used.
       log_level (str from ['NOTSET', 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']):
             Logging level to use for the local IronPython and the
             remote python instance.
