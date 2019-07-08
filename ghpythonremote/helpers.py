@@ -105,29 +105,46 @@ def get_ironpython_from_appdata(rhino_version=DEFAULT_RHINO_VERSION):
         logger.warning(
             'Unknown Rhino version "{!s}". Defaulting to Rhino {!s}.'.format(rhino_version, DEFAULT_RHINO_VERSION))
         return get_ironpython_from_appdata()
-    ghpython_version_path = os.path.join(ironpython_settings_path, 'ghpy_version.txt')
-    ironpython_lib_path = os.path.join(ironpython_settings_path, 'lib')
 
-    if os.path.isfile(ghpython_version_path):
-        with open(ghpython_version_path) as ghpython_version:
-            ghpython_version_list = ghpython_version.readline().split('.')
-        try:
-            ghpython_version_tuple = tuple(int(x) for x in ghpython_version_list)
-            if ghpython_version_tuple < (0, 6, 0, 3):
+    if rhino_version == 5:
+        ghpython_version_path = os.path.join(ironpython_settings_path, 'ghpy_version.txt')
+
+        if os.path.isfile(ghpython_version_path):
+            with open(ghpython_version_path) as ghpython_version:
+                ghpython_version_list = ghpython_version.readline().split('.')
+            try:
+                ghpython_version_tuple = tuple(int(x) for x in ghpython_version_list)
+                if ghpython_version_tuple < (0, 6, 0, 3):
+                    logger.warning(
+                        ' ghpy_version.txt indicates obsolete version {!s}.\n'.format('.'.join(ghpython_version_list))
+                        + ' ' * 9 + 'Please install version 0.6.0.3 or superior from '
+                        + 'http://www.food4rhino.com/app/ghpython\n'
+                    )
+                logger.info(' Found ghpython version {!s} in {!s}\n'.format('.'.join(ghpython_version_list),
+                                                                            ironpython_settings_path))
+            except ValueError:
                 logger.warning(
-                    'ghpy_version.txt indicates obsolete version {!s}.\n'.format('.'.join(ghpython_version_list))
-                    + 'Please install version 0.6.0.3 or superior from http://www.food4rhino.com/app/ghpython')
-            logger.info('Found ghpython version {!s} in {!s}'.format('.'.join(ghpython_version_list),
-                                                                     ironpython_settings_path))
-        except ValueError:
+                    ' Could not parse ghpy_version.txt file installation found in {!s}.\n'.format(
+                        ironpython_settings_path
+                    )
+                    + ' ' * 9 + 'Was ghpython installed and opened in Grasshopper at least once on this machine?\n'
+                )
+        else:
             logger.warning(
-                'Could not parse ghpy_version.txt file installation found in {!s}.\n'.format(ironpython_settings_path)
-                + 'Was ghpython installed and opened in Grasshopper at least once on this machine?'
+                ' No ghpy_version.txt file installation found in {!s}.\n'.format(ironpython_settings_path)
+                + ' ' * 9 + 'Was ghpython installed and opened in Grasshopper at least once on this machine?\n'
             )
-    else:
-        logger.warning('No ghpy_version.txt file installation found in {!s}.\n'.format(ironpython_settings_path)
-                       + 'Was ghpython installed and opened in Grasshopper at least once on this machine?')
+    if rhino_version == 6:
+        # Rhino 6 does not have a ghpy_version.txt file, check that there is a ghpythonlib __init__.py
+        ghpythonlib_init_path = os.path.join(ironpython_settings_path, 'lib', 'ghpythonlib', '__init__.py')
 
+        if not os.path.isfile(ghpythonlib_init_path):
+            logger.warning(
+                ' No ghpythonlib package found in {!s}.\n'.format(os.path.join(ironpython_settings_path, 'lib'))
+                + ' ' * 9 + 'Was Grasshopper for Rhino 6 opened at least once on this machine?\n'
+            )
+
+    ironpython_lib_path = os.path.join(ironpython_settings_path, 'lib')
     if not os.path.isdir(ironpython_lib_path):
         logger.error('IronPython lib directory for Rhinoceros not found in {!s}.\n'.format(ironpython_settings_path)
                      + 'Please provide a full path to one of the folders in your IronPython for Rhinoceros path.\n'
