@@ -94,13 +94,13 @@ def get_rhino_ironpython_path(location=None):
     if location is None or location == '':
         return get_ironpython_from_appdata()
 
-    if os.path.isdir(location):
-        logger.debug(' Directly using IronPython lib folder at {!s}\n'.format(location))
-        return get_ironpython_from_path(location)
-
     if type(location) == int:
         logger.debug(' Looking for IronPython installation of Rhino version {!s}.\n'.format(location))
         return get_ironpython_from_appdata(location)
+
+    if os.path.isdir(location):
+        logger.debug(' Directly using IronPython lib folder at {!s}\n'.format(location))
+        return get_ironpython_from_path(location)
 
     logger.warning(' Path {!s} is not a directory or does not exist.\n'.format(location)
                    + ' ' * 9 + 'Falling back to getting IronPython lib folder path from windows %APPDATA%.\n')
