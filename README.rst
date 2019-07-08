@@ -31,7 +31,7 @@ More details and recommendations below:
 
     If you want to be able to name virtual environments in gh-python-remote by their conda name, select "Add conda to my PATH" when prompted during Anaconda's installation.
 :Python `virtual environment`_ (optional):
-    isolate dependencies for each project by creating a new virtual environment.
+    Isolate dependencies for each project by creating a new virtual environment.
 
     If you use Anaconda, open the Windows command prompt (or the Anaconda prompt if you chose not to add conda to your PATH) and type:
 
@@ -41,7 +41,7 @@ More details and recommendations below:
 
     This will set you up with a new virtual environment named ``rhinoremote``, and install numpy and scipy in it.
 :`Rhinoceros3D`_:
-    version 5 and 6 on Windows are supported. Rhino 6 for Mac might be supported in a later release.
+    Version 5 and 6 on Windows are supported. Rhino 6 for Mac might be supported in a later release.
 :`Grasshopper`_:
     On Rhino 6, the version included with the current service release is supported. On Rhino 5, version 0.9.0076 is supported by gh-python-remote. Version 0.9.0061 and up might work as well.
 
