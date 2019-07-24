@@ -2,6 +2,14 @@
 Changelog
 *********
 
+1.2.1 (2019-07-24)
+------------------
+
+Fix
+^^^
+- Cleanup examples directory, and fix missing file at installation (#26).
+- Update logger names in .ghuser file
+
 1.2.0 (2019-07-08)
 ------------------
 
