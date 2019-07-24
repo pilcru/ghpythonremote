@@ -186,7 +186,7 @@ class PythonToGrasshopperRemote:
     >>>     Rhino = rgh.modules.Rhino
     >>>     rs = rgh.modules.rhinoscriptsyntax
     >>>     # Do stuff with all this
-    >>>     # See python_to_GH.py for a longer example
+    >>>     # See CPython_to_GH.py for a longer example
     """
 
     def __init__(self, rhino_file_path, rpyc_server_py, rhino_exe=None, timeout=60, max_retry=3,
