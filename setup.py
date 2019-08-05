@@ -70,7 +70,6 @@ setup(
     },
     data_files=[
     ],
-    include_package_data=True,
     install_requires=[
         'rpyc>=4.1.0'
     ],
