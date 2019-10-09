@@ -17,6 +17,10 @@ if __name__ == '__main__':
 
     if len(sys.argv) >= 3:
         log_level = sys.argv[2]
+        try:
+            log_level = int(log_level)
+        except:
+            log_level = getattr(logging, log_level, logging.WARNING)
     else:
         log_level = logging.WARNING
     if len(sys.argv) >= 2:
@@ -30,7 +34,6 @@ if __name__ == '__main__':
 
     # Log everything that happens on the Python server in the console
     logger = logging.getLogger()
-    log_level = getattr(logging, log_level, logging.WARNING)
     logger.setLevel(log_level)
     ch = logging.StreamHandler()
     ch.setLevel(log_level)
