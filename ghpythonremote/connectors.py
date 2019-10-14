@@ -1,4 +1,7 @@
-import _winreg
+try:
+    import _winreg as winreg
+except ImportError:
+    import winreg
 import platform
 import subprocess
 import errno
@@ -263,25 +266,44 @@ class PythonToGrasshopperRemote:
             self.rhino_popen.terminate()
 
     @staticmethod
-    def _get_rhino_path(version='5.0', preferred_bitness='same'):
+    def _get_rhino_path(version='6.0', preferred_bitness='same'):
         rhino_reg_key_path = None
-        if platform.machine().endswith('64'):
-            if preferred_bitness == 'same' or preferred_bitness == '64':
-                rhino_reg_key_path = r'SOFTWARE\McNeel\Rhinoceros\{}x64\Install'.format(version)
-            elif preferred_bitness == '32':
-                rhino_reg_key_path = r'SOFTWARE\Wow6432Node\McNeel\Rhinoceros\{}\Install'.format(version)
-        elif platform.machine().endswith('32'):
-            if preferred_bitness == 'same' or preferred_bitness == '32':
-                rhino_reg_key_path = r'SOFTWARE\McNeel\Rhinoceros\{}\Install'.format(version)
+        if platform.architecture()[0] == "64bit":
+            if preferred_bitness == "same" or preferred_bitness == "64":
+                if version == "5.0":
+                    version += "x64"
+                rhino_reg_key_path = r"SOFTWARE\McNeel\Rhinoceros\{}\Install".format(
+                    version
+                )
+                if version < "5.0":
+                    rhino_reg_key_path = None
+            elif preferred_bitness == "32":
+                rhino_reg_key_path = r"SOFTWARE\WOW6432Node\McNeel\Rhinoceros\{}\Install"
+                rhino_reg_key_path = rhino_reg_key_path.format(version)
+        elif platform.architecture()[0] == "32bit":
+            if preferred_bitness == "same" or preferred_bitness == "32":
+                rhino_reg_key_path = r"SOFTWARE\McNeel\Rhinoceros\{}\Install".format(
+                    version
+                )
+            if version > "5.0":
+                rhino_reg_key_path = None
 
         if rhino_reg_key_path is None:
             logger.error(
                 "Did not understand Rhino version ({!s}) and bitness ({!s}) options for platform {!s}.".format(
                     version, preferred_bitness, platform.machine()))
+
+        # In Python 3, OpenKey might throw a FileNotFoundError, which is not defined in Python 2
+        # Just pretend to work around that
         try:
-            rhino_reg_key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, rhino_reg_key_path)
-            rhino_path = _winreg.QueryValueEx(rhino_reg_key, 'Path')[0]
-        except OSError as e:
+            FileNotFoundError
+        except NameError:
+            FileNotFoundError = IOError
+        try:
+            rhino_reg_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,
+                                           rhino_reg_key_path)
+            rhino_path = winreg.QueryValueEx(rhino_reg_key, "Path")[0]
+        except (FileNotFoundError, OSError) as e:
             logger.error(
                 "Unable to find Rhino installation in registry. Are you running Windows with Rhinoceros installed?")
             raise e
