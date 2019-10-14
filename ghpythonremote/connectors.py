@@ -170,6 +170,8 @@ class PythonToGrasshopperRemote:
         Absolute file path to a Rhino .3dm file to open in the remote Rhino. Can be empty.
     rpyc_server_py : str
         Absolute path to the ghcompservice.py module that launches the server on the remote.
+    rhino_ver : int
+        A Rhino version to use, from 5 to 7. Overridden by rhino_exe. Defaults to 6.
     rhino_exe : str
         Absolute path to the Rhino executable. By default, fetches from the windows registry the
         Rhino 5.0 install with the same bitness as the platform.
@@ -183,7 +185,7 @@ class PythonToGrasshopperRemote:
     >>> ROOT = os.path.abspath(os.path.join(os.path.curdir, '..'))
     >>> rhino_file_path = os.path.join(ROOT, 'examples', 'curves.3dm')
     >>> rpyc_server_py = os.path.join(ROOT, 'ghcompservice.py')
-    >>> with PythonToGrasshopperRemote(rhino_file_path, rpyc_server_py, timeout=60) as py2gh:
+    >>> with PythonToGrasshopperRemote(rhino_file_path, rpyc_server_py, rhino_ver=6, timeout=60) as py2gh:
     >>>     rghcomp = py2gh.gh_remote_components
     >>>     rgh = py2gh.connection
     >>>     Rhino = rgh.modules.Rhino
@@ -192,10 +194,10 @@ class PythonToGrasshopperRemote:
     >>>     # See CPython_to_GH.py for a longer example
     """
 
-    def __init__(self, rhino_file_path, rpyc_server_py, rhino_exe=None, timeout=60, max_retry=3,
+    def __init__(self, rhino_file_path, rpyc_server_py, rhino_ver=6, rhino_exe=None, timeout=60, max_retry=3,
                  port=None):
         if rhino_exe is None:
-            self.rhino_exe = self._get_rhino_path()
+            self.rhino_exe = self._get_rhino_path(version=rhino_ver)
         else:
             self.rhino_exe = rhino_exe
         self.rhino_file_path = rhino_file_path
@@ -266,26 +268,27 @@ class PythonToGrasshopperRemote:
             self.rhino_popen.terminate()
 
     @staticmethod
-    def _get_rhino_path(version='6.0', preferred_bitness='same'):
+    def _get_rhino_path(version=6, preferred_bitness='same'):
         rhino_reg_key_path = None
+        version_str = "{!s}.0".format(version)
         if platform.architecture()[0] == "64bit":
             if preferred_bitness == "same" or preferred_bitness == "64":
-                if version == "5.0":
-                    version += "x64"
+                if version == 5:
+                    version_str += "x64"
                 rhino_reg_key_path = r"SOFTWARE\McNeel\Rhinoceros\{}\Install".format(
-                    version
+                    version_str
                 )
-                if version < "5.0":
+                if version < 5:
                     rhino_reg_key_path = None
             elif preferred_bitness == "32":
                 rhino_reg_key_path = r"SOFTWARE\WOW6432Node\McNeel\Rhinoceros\{}\Install"
-                rhino_reg_key_path = rhino_reg_key_path.format(version)
+                rhino_reg_key_path = rhino_reg_key_path.format(version_str)
         elif platform.architecture()[0] == "32bit":
             if preferred_bitness == "same" or preferred_bitness == "32":
                 rhino_reg_key_path = r"SOFTWARE\McNeel\Rhinoceros\{}\Install".format(
-                    version
+                    version_str
                 )
-            if version > "5.0":
+            if version > 5:
                 rhino_reg_key_path = None
 
         if rhino_reg_key_path is None:
@@ -313,8 +316,14 @@ class PythonToGrasshopperRemote:
         assert (self.rhino_exe is not "" and self.rhino_exe is not None)
         assert (self.rpyc_server_py is not "" and self.rpyc_server_py is not None)
         assert (self.port is not "" and self.port is not None)
-        rhino_call = '"{!s}" /nosplash /notemplate /runscript="-_RunPythonScript ""{!s}"" {!s} -_Exit " "{!s}"'.format(
-            self.rhino_exe, self.rpyc_server_py, self.port, (self.rhino_file_path or ''))
+        rhino_call = [
+            self.rhino_exe,
+            "/nosplash",
+            "/notemplate",
+            '/runscript="-_RunPythonScript ""{!s}"" {!s} -_Exit "'.format(self.rpyc_server_py, self.port)
+        ]
+        if self.rhino_file_path:
+            rhino_call.append(self.rhino_file_path)
         rhino_popen = subprocess.Popen(rhino_call, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
         return rhino_popen
 
