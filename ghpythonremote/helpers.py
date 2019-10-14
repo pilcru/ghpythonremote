@@ -60,6 +60,10 @@ def get_python_from_conda_env(env_name):
         logger.warning('conda not found in your windows %PATH%, cannot fetch environment by name.\n'
                        + 'Falling back to getting python path from windows %PATH%.\n')
         return get_python_path()
+    except subprocess.CalledProcessError:
+        logger.warning('conda env list failed, cannot fetch environment by name.\n'
+                       + 'Falling back to getting python path from windows %PATH%.\n')
+        return get_python_path()
 
     env_dir = [path for path in envs if os.path.split(path)[-1] == env_name]
     if len(env_dir) > 1:
