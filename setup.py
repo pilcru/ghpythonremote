@@ -1,11 +1,12 @@
-from setuptools import setup, find_packages
 # To use a consistent encoding
 from codecs import open
 from os import path
+from setuptools import setup, find_packages
 import sys
 
 if sys.version_info[0] > 2:
-    sys.exit("Incompatible with Python 3. IronPython 2.7 from Rhino can only be connected to a Python 2 instance.")
+    sys.exit("Incompatible with Python 3. IronPython 2.7 from Rhino can only be "
+             "connected to a Python 2 instance.")
 
 here = path.abspath(path.dirname(__file__))
 
@@ -23,8 +24,9 @@ with open(path.join(here, 'CHANGELOG.rst'), encoding='utf-8') as f:
 
 setup(
     name='gh-python-remote',
-    description=('GH Python Remote is a package to get Rhinoceros3D/Grasshopper and Python to collaborate better: '
-                 + 'connect an external python instance to Grasshopper, and vice-versa.'),
+    description=('GH Python Remote is a package to get Rhinoceros3D/Grasshopper and '
+                 + 'Python to collaborate better: connect an external python instance'
+                 + ' to Grasshopper, and vice-versa.'),
     long_description=long_description,
     long_description_content_type='text/x-rst',
     version=__version__,

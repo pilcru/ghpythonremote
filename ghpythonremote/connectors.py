@@ -1,29 +1,41 @@
+import errno
+import logging
+import os
+import platform
+import socket
+import subprocess
+from time import sleep
 try:
     import _winreg as winreg
 except ImportError:
     import winreg
-import platform
-import subprocess
-import errno
-import socket
-import logging
-import os
-from ghpythonremote import rpyc
-from time import sleep
 
+from ghpythonremote import rpyc
 from .helpers import get_python_path, get_extended_env_path_conda
 
-logger = logging.getLogger('ghpythonremote.connectors')
+logger = logging.getLogger("ghpythonremote.connectors")
 
 
 class GrasshopperToPythonRemote:
-    def __init__(self, rpyc_server_py, python_exe=None, location=None, timeout=60, max_retry=3,
-                 port=None, log_level=logging.WARNING, working_dir=None):
+    def __init__(
+        self,
+        rpyc_server_py,
+        python_exe=None,
+        location=None,
+        timeout=60,
+        max_retry=3,
+        port=None,
+        log_level=logging.WARNING,
+        working_dir=None,
+    ):
         if python_exe is None:
             self.python_exe = get_python_path(location)
         else:
             if location is not None:
-                logger.debug('python_exe and env_name specified at the same time, ignoring env_name.')
+                logger.debug(
+                    "python_exe and env_name specified at the same time, ignoring "
+                    "env_name."
+                )
             self.python_exe = python_exe
         self.env = get_extended_env_path_conda(self.python_exe)
         self.rpyc_server_py = rpyc_server_py
@@ -87,27 +99,32 @@ class GrasshopperToPythonRemote:
 
     def close(self):
         if not self.connection.closed:
-            logger.info('Closing connection.')
+            logger.info("Closing connection.")
             self.connection.close()
         if self.python_popen.poll() is None:
-            logger.info('Closing Python.')
+            logger.info("Closing Python.")
             self.python_popen.terminate()
 
     def _launch_python(self):
-        logger.debug('Using python executable: {!s}'.format(self.python_exe))
-        logger.debug('Using rpyc_server module: {!s}'.format(self.rpyc_server_py))
-        logger.debug('Using port: {}'.format(self.port))
-        logger.debug('Using log_level: {!s}'.format(self.log_level))
-        logger.debug('Using working_dir: {!s}'.format(self.working_dir))
-        assert (self.python_exe is not "" and self.python_exe is not None)
-        assert (self.rpyc_server_py is not "" and self.rpyc_server_py is not None)
-        assert (self.port is not "" and self.port is not None)
-        assert (self.log_level is not "" and self.log_level is not None)
+        logger.debug("Using python executable: {!s}".format(self.python_exe))
+        logger.debug("Using rpyc_server module: {!s}".format(self.rpyc_server_py))
+        logger.debug("Using port: {}".format(self.port))
+        logger.debug("Using log_level: {!s}".format(self.log_level))
+        logger.debug("Using working_dir: {!s}".format(self.working_dir))
+        assert self.python_exe is not "" and self.python_exe is not None
+        assert self.rpyc_server_py is not "" and self.rpyc_server_py is not None
+        assert self.port is not "" and self.port is not None
+        assert self.log_level is not "" and self.log_level is not None
         python_call = '"{!s}" "{!s}" "{}" "{!s}"'.format(
-            self.python_exe, self.rpyc_server_py, self.port, self.log_level)
+            self.python_exe, self.rpyc_server_py, self.port, self.log_level
+        )
         cwd = self.working_dir
         python_popen = subprocess.Popen(
-            python_call, stdout=subprocess.PIPE, stdin=subprocess.PIPE, cwd=cwd, env=self.env
+            python_call,
+            stdout=subprocess.PIPE,
+            stdin=subprocess.PIPE,
+            cwd=cwd,
+            env=self.env,
         )
         return python_popen
 
@@ -117,10 +134,16 @@ class GrasshopperToPythonRemote:
         for i in range(self.timeout):
             try:
                 if not connection:
-                    logger.debug("Connecting. Timeout in {:d} seconds.".format(self.timeout - i))
-                    connection = rpyc.classic.connect('localhost', self.port)
+                    logger.debug(
+                        "Connecting. Timeout in {:d} seconds.".format(self.timeout - i)
+                    )
+                    connection = rpyc.classic.connect("localhost", self.port)
                 else:
-                    logger.debug("Found connection, testing. Timeout in {:d} seconds.".format(self.timeout - i))
+                    logger.debug(
+                        "Found connection, testing. Timeout in {:d} seconds.".format(
+                            self.timeout - i
+                        )
+                    )
                     connection.ping(timeout=1)
                     logger.debug("Connection ok, returning.")
                     logger.info("Connected.")
@@ -133,11 +156,16 @@ class GrasshopperToPythonRemote:
                     )
                 if i == self.timeout - 1 or not e.errno == errno.ECONNREFUSED:
                     raise RuntimeError(
-                        "Could not connect to remote python {!s}. ".format(self.python_exe)
+                        "Could not connect to remote python {!s}. ".format(
+                            self.python_exe
+                        )
                         + "Does the remote python have rpyc installed?"
                     )
                 sleep(1)
-            except (rpyc.core.protocol.PingError, rpyc.core.async_.AsyncResultTimeout) as e:
+            except (
+                rpyc.core.protocol.PingError,
+                rpyc.core.async_.AsyncResultTimeout,
+            ) as e:
                 logger.debug(str(e))
                 raise e
 
@@ -153,39 +181,49 @@ class GrasshopperToPythonRemote:
             self.connection = self._get_connection()
         else:
             raise RuntimeError(
-                "Lost connection to Python, and reconnection attempts limit ({:d}) reached. Exiting.".format(
-                    self.max_retry)
+                "Lost connection to Python, and reconnection attempts limit ({:d}) "
+                "reached. Exiting.".format(
+                    self.max_retry
+                )
             )
 
 
 class PythonToGrasshopperRemote:
-    """Creates a remote Rhino/IronPython instance (with Grasshopper functions) connected to a local python engine.
+    """Creates a remote Rhino/IronPython instance (with Grasshopper functions)
+    connected to a local python engine.
     
-    The local instance will be able to import all objects from the Rhino IronPython engine, as well as Grasshopper
-    components. Rhino will appear frozen on a python script it is reading.
+    The local instance will be able to import all objects from the Rhino IronPython
+    engine, as well as Grasshopper components. Rhino will appear frozen on a python
+    script it is reading.
         
     Parameters
     ----------
     rhino_file_path : str
-        Absolute file path to a Rhino .3dm file to open in the remote Rhino. Can be empty.
+        Absolute file path to a Rhino .3dm file to open in the remote Rhino. Can be
+        empty.
     rpyc_server_py : str
-        Absolute path to the ghcompservice.py module that launches the server on the remote.
+        Absolute path to the ghcompservice.py module that launches the server on the
+        remote.
     rhino_ver : int
         A Rhino version to use, from 5 to 7. Overridden by rhino_exe. Defaults to 6.
     rhino_exe : str
-        Absolute path to the Rhino executable. By default, fetches from the windows registry the
-        Rhino 5.0 install with the same bitness as the platform.
+        Absolute path to the Rhino executable. By default, fetches from the windows
+        registry the Rhino install with the same bitness as the platform, and version
+        given by rhino_ver.
     timeout : int
         Number of seconds to wait for Rhino and IronPython to startup.
     max_retry : int
-        Number of times Rhino will be restarted if it crashes, before declaring the connection dead.
+        Number of times Rhino will be restarted if it crashes, before declaring the
+        connection dead.
     
     Examples
     --------
     >>> ROOT = os.path.abspath(os.path.join(os.path.curdir, '..'))
     >>> rhino_file_path = os.path.join(ROOT, 'examples', 'curves.3dm')
     >>> rpyc_server_py = os.path.join(ROOT, 'ghcompservice.py')
-    >>> with PythonToGrasshopperRemote(rhino_file_path, rpyc_server_py, rhino_ver=6, timeout=60) as py2gh:
+    >>> with PythonToGrasshopperRemote(
+    >>>     rhino_file_path, rpyc_server_py, rhino_ver=6, timeout=60
+    >>> ) as py2gh:
     >>>     rghcomp = py2gh.gh_remote_components
     >>>     rgh = py2gh.connection
     >>>     Rhino = rgh.modules.Rhino
@@ -194,8 +232,16 @@ class PythonToGrasshopperRemote:
     >>>     # See CPython_to_GH.py for a longer example
     """
 
-    def __init__(self, rhino_file_path, rpyc_server_py, rhino_ver=6, rhino_exe=None, timeout=60, max_retry=3,
-                 port=None):
+    def __init__(
+        self,
+        rhino_file_path,
+        rpyc_server_py,
+        rhino_ver=6,
+        rhino_exe=None,
+        timeout=60,
+        max_retry=3,
+        port=None,
+    ):
         if rhino_exe is None:
             self.rhino_exe = self._get_rhino_path(version=rhino_ver)
         else:
@@ -211,7 +257,11 @@ class PythonToGrasshopperRemote:
             self.port = port
         self.rhino_popen = self._launch_rhino()
         self.connection = self._get_connection()
-        self.gh_remote_components = self.connection.root.get_component  # TODO: improve ghcomp to get clusters the same way we get compiled components, thus removing the need for a custom getter
+        self.gh_remote_components = (
+            self.connection.root.get_component
+        )
+        # TODO: improve ghcomp to get clusters the same way we get compiled components,
+        # thus removing the need for a custom getter
 
     def __enter__(self):
         return self
@@ -240,9 +290,14 @@ class PythonToGrasshopperRemote:
         return True
 
     def run_gh_component(self, component_name, *nargs, **kwargs):
-        """Run a specific Grasshopper component on the remote, with Rhino crash handling."""
-        is_cluster = kwargs.pop("is_cluster",
-                                False)  # TODO: improve ghcomp to get clusters the same way we get compiled components, thus removing the need for a custom getter
+        """Run a specific Grasshopper component on the remote, with Rhino crash
+        handling.
+        """
+        is_cluster = kwargs.pop(
+            "is_cluster", False
+        )
+        # TODO: improve ghcomp to get clusters the same way we get compiled components,
+        # thus removing the need for a custom getter
         component = self.gh_remote_components(component_name, is_cluster=is_cluster)
         component_output = kwargs.pop("component_output", None)
 
@@ -261,14 +316,14 @@ class PythonToGrasshopperRemote:
 
     def close(self):
         if not self.connection.closed:
-            logger.info('Closing connection.')
+            logger.info("Closing connection.")
             self.connection.close()
         if self.rhino_popen.poll() is None:
-            logger.info('Closing Rhino.')
+            logger.info("Closing Rhino.")
             self.rhino_popen.terminate()
 
     @staticmethod
-    def _get_rhino_path(version=6, preferred_bitness='same'):
+    def _get_rhino_path(version=6, preferred_bitness="same"):
         rhino_reg_key_path = None
         version_str = "{!s}.0".format(version)
         if platform.architecture()[0] == "64bit":
@@ -281,7 +336,9 @@ class PythonToGrasshopperRemote:
                 if version < 5:
                     rhino_reg_key_path = None
             elif preferred_bitness == "32":
-                rhino_reg_key_path = r"SOFTWARE\WOW6432Node\McNeel\Rhinoceros\{}\Install"
+                rhino_reg_key_path = (
+                    r"SOFTWARE\WOW6432Node\McNeel\Rhinoceros\{}\Install"
+                )
                 rhino_reg_key_path = rhino_reg_key_path.format(version_str)
         elif platform.architecture()[0] == "32bit":
             if preferred_bitness == "same" or preferred_bitness == "32":
@@ -293,38 +350,48 @@ class PythonToGrasshopperRemote:
 
         if rhino_reg_key_path is None:
             logger.error(
-                "Did not understand Rhino version ({!s}) and bitness ({!s}) options for platform {!s}.".format(
-                    version, preferred_bitness, platform.machine()))
+                "Did not understand Rhino version ({!s}) and bitness ({!s}) options "
+                "for platform {!s}.".format(
+                    version, preferred_bitness, platform.machine()
+                )
+            )
 
-        # In Python 3, OpenKey might throw a FileNotFoundError, which is not defined in Python 2
-        # Just pretend to work around that
+        # In Python 3, OpenKey might throw a FileNotFoundError, which is not defined in
+        # Python 2. Just pretend to work around that
         try:
             FileNotFoundError
         except NameError:
             FileNotFoundError = IOError
         try:
-            rhino_reg_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,
-                                           rhino_reg_key_path)
+            rhino_reg_key = winreg.OpenKey(
+                winreg.HKEY_LOCAL_MACHINE, rhino_reg_key_path
+            )
             rhino_path = winreg.QueryValueEx(rhino_reg_key, "Path")[0]
         except (FileNotFoundError, OSError) as e:
             logger.error(
-                "Unable to find Rhino installation in registry. Are you running Windows with Rhinoceros installed?")
+                "Unable to find Rhino installation in registry. Are you running "
+                "Windows with Rhinoceros installed?"
+            )
             raise e
-        return os.path.join(rhino_path, 'Rhino.exe')
+        return os.path.join(rhino_path, "Rhino.exe")
 
     def _launch_rhino(self):
-        assert (self.rhino_exe is not "" and self.rhino_exe is not None)
-        assert (self.rpyc_server_py is not "" and self.rpyc_server_py is not None)
-        assert (self.port is not "" and self.port is not None)
+        assert self.rhino_exe is not "" and self.rhino_exe is not None
+        assert self.rpyc_server_py is not "" and self.rpyc_server_py is not None
+        assert self.port is not "" and self.port is not None
         rhino_call = [
             self.rhino_exe,
             "/nosplash",
             "/notemplate",
-            '/runscript="-_RunPythonScript ""{!s}"" {!s} -_Exit "'.format(self.rpyc_server_py, self.port)
+            '/runscript="-_RunPythonScript ""{!s}"" {!s} -_Exit "'.format(
+                self.rpyc_server_py, self.port
+            ),
         ]
         if self.rhino_file_path:
             rhino_call.append(self.rhino_file_path)
-        rhino_popen = subprocess.Popen(rhino_call, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+        rhino_popen = subprocess.Popen(
+            rhino_call, stdout=subprocess.PIPE, stdin=subprocess.PIPE
+        )
         return rhino_popen
 
     def _get_connection(self):
@@ -333,15 +400,25 @@ class PythonToGrasshopperRemote:
         for i in range(self.timeout):
             try:
                 if not connection:
-                    logger.debug("Connecting. Timeout in {:d} seconds.".format(self.timeout - i))
-                    connection = rpyc.classic.connect('localhost', self.port)
+                    logger.debug(
+                        "Connecting. Timeout in {:d} seconds.".format(self.timeout - i)
+                    )
+                    connection = rpyc.classic.connect("localhost", self.port)
                 else:
-                    logger.debug("Found connection, testing. Timeout in {:d} seconds.".format(self.timeout - i))
+                    logger.debug(
+                        "Found connection, testing. Timeout in {:d} seconds.".format(
+                            self.timeout - i
+                        )
+                    )
                     connection.ping(timeout=1)
                     logger.debug("Connection ok, returning.")
                     logger.info("Connected.")
                     return connection
-            except (socket.error, rpyc.core.protocol.PingError, rpyc.core.async_.AsyncResultTimeout) as e:
+            except (
+                socket.error,
+                rpyc.core.protocol.PingError,
+                rpyc.core.async_.AsyncResultTimeout,
+            ) as e:
                 if e is socket.error and not e.errno == errno.ECONNREFUSED:
                     raise
                 if i == self.timeout - 1:
@@ -362,14 +439,16 @@ class PythonToGrasshopperRemote:
             self.gh_remote_components = self.connection.root.get_component
         else:
             raise RuntimeError(
-                "Lost connection to Rhino, and reconnection attempts limit ({:d}) reached. Exiting.".format(
-                    self.max_retry)
+                "Lost connection to Rhino, and reconnection attempts limit ({:d}) "
+                "reached. Exiting.".format(
+                    self.max_retry
+                )
             )
 
 
 def _get_free_tcp_port():
     tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    tcp.bind(('', 0))
+    tcp.bind(("", 0))
     addr, port = tcp.getsockname()
     tcp.close()
     return port
