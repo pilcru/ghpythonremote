@@ -54,7 +54,7 @@ From the Windows command prompt (or the special Anaconda or Python prompt if pip
 
 .. code-block:: bash
 
-   pip install gh-python-remote --upgrade --no-binary=:all:
+   pip install gh-python-remote --upgrade
    python -m ghpythonremote._configure_ironpython_installation
 
 This will install gh-python-remote for Rhino 6, and install the gh-python-remote UserObject in all Grasshopper versions.
