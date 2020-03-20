@@ -141,7 +141,9 @@ class GrasshopperToPythonRemote:
                     connection = rpyc.utils.factory.connect(
                         "localhost",
                         self.port,
+                        service=rpyc.core.service.ClassicService,
                         config={"sync_request_timeout": None},
+                        ipv6=False,
                         keepalive=True,
                     )
                 else:
@@ -406,7 +408,9 @@ class PythonToGrasshopperRemote:
                     connection = rpyc.utils.factory.connect(
                         "localhost",
                         self.port,
+                        service=rpyc.core.service.ClassicService,
                         config={"sync_request_timeout": None},
+                        ipv6=False,
                         keepalive=True,
                     )
                 else:
