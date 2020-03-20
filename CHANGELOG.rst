@@ -2,7 +2,7 @@
 Changelog
 *********
 
-1.2.2 (2020-03-20)
+1.3.0 (2020-03-20)
 ------------------
 
 New
@@ -13,6 +13,7 @@ Changes
 ^^^^^^^
 - Better Rhino path finder.
 - Catch conda env list failures.
+- Upgrade to RPyC 4.1.4
 
 Fix
 ^^^
