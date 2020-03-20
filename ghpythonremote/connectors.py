@@ -5,6 +5,7 @@ import platform
 import socket
 import subprocess
 from time import sleep
+
 try:
     import _winreg as winreg
 except ImportError:
@@ -137,7 +138,12 @@ class GrasshopperToPythonRemote:
                     logger.debug(
                         "Connecting. Timeout in {:d} seconds.".format(self.timeout - i)
                     )
-                    connection = rpyc.classic.connect("localhost", self.port)
+                    connection = rpyc.utils.factory.connect(
+                        "localhost",
+                        self.port,
+                        config={"sync_request_timeout": None},
+                        keepalive=True,
+                    )
                 else:
                     logger.debug(
                         "Found connection, testing. Timeout in {:d} seconds.".format(
@@ -182,9 +188,7 @@ class GrasshopperToPythonRemote:
         else:
             raise RuntimeError(
                 "Lost connection to Python, and reconnection attempts limit ({:d}) "
-                "reached. Exiting.".format(
-                    self.max_retry
-                )
+                "reached. Exiting.".format(self.max_retry)
             )
 
 
@@ -257,9 +261,7 @@ class PythonToGrasshopperRemote:
             self.port = port
         self.rhino_popen = self._launch_rhino()
         self.connection = self._get_connection()
-        self.gh_remote_components = (
-            self.connection.root.get_component
-        )
+        self.gh_remote_components = self.connection.root.get_component
         # TODO: improve ghcomp to get clusters the same way we get compiled components,
         # thus removing the need for a custom getter
 
@@ -293,9 +295,7 @@ class PythonToGrasshopperRemote:
         """Run a specific Grasshopper component on the remote, with Rhino crash
         handling.
         """
-        is_cluster = kwargs.pop(
-            "is_cluster", False
-        )
+        is_cluster = kwargs.pop("is_cluster", False)
         # TODO: improve ghcomp to get clusters the same way we get compiled components,
         # thus removing the need for a custom getter
         component = self.gh_remote_components(component_name, is_cluster=is_cluster)
@@ -403,7 +403,12 @@ class PythonToGrasshopperRemote:
                     logger.debug(
                         "Connecting. Timeout in {:d} seconds.".format(self.timeout - i)
                     )
-                    connection = rpyc.classic.connect("localhost", self.port)
+                    connection = rpyc.utils.factory.connect(
+                        "localhost",
+                        self.port,
+                        config={"sync_request_timeout": None},
+                        keepalive=True,
+                    )
                 else:
                     logger.debug(
                         "Found connection, testing. Timeout in {:d} seconds.".format(
@@ -440,9 +445,7 @@ class PythonToGrasshopperRemote:
         else:
             raise RuntimeError(
                 "Lost connection to Rhino, and reconnection attempts limit ({:d}) "
-                "reached. Exiting.".format(
-                    self.max_retry
-                )
+                "reached. Exiting.".format(self.max_retry)
             )
 
 

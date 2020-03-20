@@ -2,6 +2,14 @@
 Changelog
 *********
 
+1.2.2 (2020-03-20)
+------------------
+
+Fix
+^^^
+- Fix missing file at installation.
+- Fix async request timeout (#14).
+
 1.2.1 (2019-07-24)
 ------------------
 
