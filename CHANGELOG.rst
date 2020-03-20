@@ -5,10 +5,20 @@ Changelog
 1.2.2 (2020-03-20)
 ------------------
 
+New
+^^^
+- Add option to select Rhino version in CPy to GH (#29).
+
+Changes
+^^^^^^^
+- Better Rhino path finder.
+- Catch conda env list failures.
+
 Fix
 ^^^
 - Fix missing file at installation.
 - Fix async request timeout (#14).
+- Repair log level passing to pythonservice.py.
 
 1.2.1 (2019-07-24)
 ------------------
