@@ -28,7 +28,6 @@ if __name__ == "__main__":
         "install",
         "--upgrade",
         "--target=" + rhino_ironpython_path,
-        "--no-binary=:all:",
         "--no-compile",
         "--ignore-requires-python",
         package_name,
