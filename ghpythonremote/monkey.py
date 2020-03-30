@@ -33,7 +33,12 @@ if sys.platform == "cli":
         ):
             # netrefs are handled first since __class__ is a descriptor
             return obj.____id_pack__
-        elif inspect.ismodule(obj) or getattr(obj, "__name__", None) == "module":
+        # str(obj).split(':')[0] == "Microsoft.Scripting.Actions.NamespaceTracker" should also work
+        elif (
+            inspect.ismodule(obj)
+            or getattr(obj, "__name__", None) == "module"
+            or str(type(obj)) == "<type 'namespace#'>"
+        ):
             # TODO: not sure about this, need to enumerate cases in units
             if isinstance(obj, type):  # module
                 obj_cls = type(obj)
