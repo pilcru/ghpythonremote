@@ -382,7 +382,7 @@ class PythonToGrasshopperRemote:
         assert self.rpyc_server_py is not "" and self.rpyc_server_py is not None
         assert self.port is not "" and self.port is not None
         rhino_call = [
-            self.rhino_exe,
+            '"' + self.rhino_exe + '"',
             "/nosplash",
             "/notemplate",
             '/runscript="-_RunPythonScript ""{!s}"" {!s} -_Exit "'.format(
@@ -391,6 +391,9 @@ class PythonToGrasshopperRemote:
         ]
         if self.rhino_file_path:
             rhino_call.append(self.rhino_file_path)
+        # Default escaping in subprocess.line2cmd does not work here,
+        # manually convert to string
+        rhino_call = " ".join(rhino_call)
         rhino_popen = subprocess.Popen(
             rhino_call, stdout=subprocess.PIPE, stdin=subprocess.PIPE
         )
