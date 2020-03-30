@@ -11,6 +11,85 @@ if sys.platform == "cli":
 
     rpyc.lib.compat.BYTES_LITERAL = BYTES_LITERAL
 
+    # TODO: This will not be found in Rhino 5!
+    # TODO: This will not work if in IronPython outside Rhino!
+    # TODO: This loads the gh components early?? not needed if not accessing them??
+    # TODO: Remove that when ghpythonlib.components.__namedtuple.__getattr__ is fixed
+    import ghpythonlib.components
+
+    def get_id_pack(obj):
+        """introspects the given "local" object, returns id_pack as expected by BaseNetref
+
+        The given object is "local" in the sense that it is from the local cache. Any object in the local cache exists
+        in the current address space or is a netref. A netref in the local cache could be from a chained-connection.
+        To handle type related behavior properly, the attribute `__class__` is a descriptor for netrefs.
+
+        So, check thy assumptions regarding the given object when creating `id_pack`.
+        """
+
+        # TODO: Remove that when ghpythonlib.components.__namedtuple.__getattr__ is fixed
+        if hasattr(obj, "____id_pack__") and not isinstance(
+            obj, ghpythonlib.components.__namedtuple
+        ):
+            # netrefs are handled first since __class__ is a descriptor
+            return obj.____id_pack__
+        elif inspect.ismodule(obj) or getattr(obj, "__name__", None) == "module":
+            # TODO: not sure about this, need to enumerate cases in units
+            if isinstance(obj, type):  # module
+                obj_cls = type(obj)
+                name_pack = "{0}.{1}".format(obj_cls.__module__, obj_cls.__name__)
+                return (name_pack, id(type(obj)), id(obj))
+            else:
+                if inspect.ismodule(obj) and obj.__name__ != "module":
+                    if obj.__name__ in sys.modules:
+                        name_pack = obj.__name__
+                    else:
+                        name_pack = "{0}.{1}".format(
+                            obj.__class__.__module__, obj.__name__
+                        )
+                elif inspect.ismodule(obj):
+                    name_pack = "{0}.{1}".format(obj__module__, obj.__name__)
+                    print(name_pack)
+                elif hasattr(obj, "__module__"):
+                    name_pack = "{0}.{1}".format(obj.__module__, obj.__name__)
+                else:
+                    obj_cls = type(obj)
+                    name_pack = "{0}".format(obj.__name__)
+                return (name_pack, id(type(obj)), id(obj))
+        elif not inspect.isclass(obj):
+            name_pack = "{0}.{1}".format(
+                obj.__class__.__module__, obj.__class__.__name__
+            )
+            return (name_pack, id(type(obj)), id(obj))
+        else:
+            name_pack = "{0}.{1}".format(obj.__module__, obj.__name__)
+            return (name_pack, id(obj), 0)
+
+    rpyc.lib.get_id_pack = get_id_pack
+    rpyc.core.netref.get_id_pack = get_id_pack
+    rpyc.core.protocol.get_id_pack = get_id_pack
+
+    # TODO: Remove that when ghpythonlib.components.__namedtuple.__getattr__ is fixed
+    def _handle_inspect(self, id_pack):  # request handler
+        obj = self._local_objects[id_pack]
+        if hasattr(obj, "____conn__") and not isinstance(
+            obj, ghpythonlib.components.__namedtuple
+        ):
+            # When RPyC is chained (RPyC over RPyC), id_pack is cached in local objects as a netref
+            # since __mro__ is not a safe attribute the request is forwarded using the proxy connection
+            # see issue #346 or tests.test_rpyc_over_rpyc.Test_rpyc_over_rpyc
+            conn = self._local_objects[id_pack].____conn__
+            return conn.sync_request(rpyc.core.consts.HANDLE_INSPECT, id_pack)
+        else:
+            return tuple(
+                rpyc.lib.get_methods(
+                    rpyc.core.netref.LOCAL_ATTRS, self._local_objects[id_pack]
+                )
+            )
+
+    # TODO: Remove that when ghpythonlib.componentns.__namedtuple.__getattr__ is fixed
+    rpyc.core.protocol.Connection._handle_inspect = _handle_inspect
+
     if sys.version_info < (2, 7, 5):
 
         def dump(obj):
