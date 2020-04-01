@@ -7,21 +7,13 @@ class GhcompService(rpyc.ClassicService):
         print("Incoming connection.")
         super(GhcompService, self).on_connect(conn)
         import ghpythonlib.components as ghcomp
+        from ghpythonremote import ghuserobjects as ghuo
 
         self.ghcomp = ghcomp
+        self.ghuo = ghuo
 
     def on_disconnect(self, conn):
         print("Disconnected.")
-
-    def get_component(self, component_name, is_cluster_component=False):
-        component = getattr(self.ghcomp, component_name)
-        if is_cluster_component:
-            component = getattr(
-                component, component_name
-            )
-            # TODO: improve ghcomp to get clusters the same way we get compiled
-            # components, thus removing the need for a custom getter
-        return component
 
 
 if __name__ == "__main__":

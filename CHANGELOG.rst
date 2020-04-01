@@ -2,6 +2,18 @@
 Changelog
 *********
 
+1.3.1 (2020-04-01)
+------------------
+
+Changes
+^^^^^^^
+- Allow access to GH user objects from CPython. Access them from a PythonToGrasshopperRemote object as `py2gh.gh_remote_userobjects.<UO Name>`
+- Remove GhCompService.get_component. Access remote GH components from a PythonToGrasshopperRemote object as `py2gh.gh_remote_components.<Component Name>`
+
+Fix
+^^^
+- Fix CPython -> Rhino Python connections for Rhino 6.
+
 1.3.0 (2020-03-20)
 ------------------
 

@@ -263,9 +263,8 @@ class PythonToGrasshopperRemote:
             self.port = port
         self.rhino_popen = self._launch_rhino()
         self.connection = self._get_connection()
-        self.gh_remote_components = self.connection.root.get_component
-        # TODO: improve ghcomp to get clusters the same way we get compiled components,
-        # thus removing the need for a custom getter
+        self.gh_remote_components = self.connection.root.ghcomp
+        self.gh_remote_userobjects = self.connection.root.ghuo
 
     def __enter__(self):
         return self

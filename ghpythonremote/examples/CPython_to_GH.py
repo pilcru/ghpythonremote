@@ -17,9 +17,8 @@ if __name__ == "__main__":
         rhino_file_path, rpyc_server_py, rhino_ver=6, timeout=60
     ) as py2gh:
         # Stuff that we can reach
-        rghcomp = (
-            py2gh.gh_remote_components
-        )  # A getter function for a named Grasshopper compiled component or cluster
+        rghcomp = py2gh.gh_remote_components  # Named Grasshopper compiled components
+        rghuo = py2gh.gh_remote_userobjects  # Named Grasshopper user objects
         rgh = py2gh.connection  # Represents the remote instance root object
         Rhino = (
             rgh.modules.Rhino
@@ -40,5 +39,7 @@ if __name__ == "__main__":
             c.Id for c in curves
         )  # rhinoscriptsyntax doesn't like mutable objects through the connection
         gh_curves = rs.coerceguidlist(curves_id)
-        area = rghcomp("Area", is_cluster_component=False)
-        print(sum(area(gh_curves)[0]))
+        # Call a GH component
+        print(sum(rghcomp.Area(gh_curves)[0]))
+        # Call a GH user object, previously created with the name "TestClusterGHPR"
+        print(rghuo.TestClusterGHPR(3, y=4))

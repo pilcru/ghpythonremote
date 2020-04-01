@@ -1,3 +1,4 @@
+import inspect
 import sys
 
 import rpyc
@@ -53,7 +54,7 @@ if sys.platform == "cli":
                             obj.__class__.__module__, obj.__name__
                         )
                 elif inspect.ismodule(obj):
-                    name_pack = "{0}.{1}".format(obj__module__, obj.__name__)
+                    name_pack = "{0}.{1}".format(obj.__module__, obj.__name__)
                     print(name_pack)
                 elif hasattr(obj, "__module__"):
                     name_pack = "{0}.{1}".format(obj.__module__, obj.__name__)
@@ -92,7 +93,7 @@ if sys.platform == "cli":
                 )
             )
 
-    # TODO: Remove that when ghpythonlib.componentns.__namedtuple.__getattr__ is fixed
+    # TODO: Remove that when ghpythonlib.components.__namedtuple.__getattr__ is fixed
     rpyc.core.protocol.Connection._handle_inspect = _handle_inspect
 
     if sys.version_info < (2, 7, 5):
