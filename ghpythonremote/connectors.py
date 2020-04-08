@@ -247,6 +247,7 @@ class PythonToGrasshopperRemote:
         timeout=60,
         max_retry=3,
         port=None,
+        log_level=logging.WARNING
     ):
         if rhino_exe is None:
             self.rhino_exe = self._get_rhino_path(version=rhino_ver)
@@ -261,6 +262,7 @@ class PythonToGrasshopperRemote:
             self.port = _get_free_tcp_port()
         else:
             self.port = port
+        self.log_level = log_level
         self.rhino_popen = self._launch_rhino()
         self.connection = self._get_connection()
         self.gh_remote_components = self.connection.root.ghcomp
@@ -384,8 +386,8 @@ class PythonToGrasshopperRemote:
             '"' + self.rhino_exe + '"',
             "/nosplash",
             "/notemplate",
-            '/runscript="-_RunPythonScript ""{!s}"" {!s} -_Exit "'.format(
-                self.rpyc_server_py, self.port
+            '/runscript="-_RunPythonScript ""{!s}"" {!s} {!s} -_Exit "'.format(
+                self.rpyc_server_py, self.port, self.log_level,
             ),
         ]
         if self.rhino_file_path:

@@ -5,7 +5,20 @@ from os import path
 import ghpythonremote
 from ghpythonremote.connectors import PythonToGrasshopperRemote
 
-logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.DEBUG)
+local_log_level = logging.DEBUG
+logger = logging.getLogger("ghpythonremote")
+logger.setLevel(local_log_level)
+ch = logging.StreamHandler()
+ch.setLevel(local_log_level)
+formatter = logging.Formatter("%(levelname)s: %(name)s:\n%(message)s")
+ch.setFormatter(formatter)
+logger.handlers = []
+logger.addHandler(ch)
+logger = logging.getLogger("ghpythonremote.Python_to_GH")
+
+ROOT = path.abspath(path.dirname(inspect.getfile(ghpythonremote)))
+rpyc_server_py = path.join(ROOT, "pythonservice.py")
+
 
 # TODO: This could be made a console script in setup.py, with some additional config
 if __name__ == "__main__":
@@ -14,7 +27,7 @@ if __name__ == "__main__":
     rpyc_server_py = path.join(ROOT, "ghcompservice.py")
 
     with PythonToGrasshopperRemote(
-        rhino_file_path, rpyc_server_py, rhino_ver=6, timeout=60
+        None, rpyc_server_py, rhino_ver=6, timeout=60, log_level=logging.DEBUG
     ) as py2gh:
         # Stuff that we can reach
         rghcomp = py2gh.gh_remote_components  # Named Grasshopper compiled components
