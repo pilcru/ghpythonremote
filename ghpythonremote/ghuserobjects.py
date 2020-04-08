@@ -17,6 +17,7 @@ import sys
 if sys.platform != "cli":
     raise(RuntimeError, "This module is only intended to be run in Rhino Python")
 
+from collections import namedtuple
 import clr
 
 clr.AddReference('Grasshopper, Culture=neutral, PublicKeyToken=dda4f5ec2cd80803')
@@ -26,8 +27,6 @@ import Rhino
 import Grasshopper as gh
 import sys
 import re
-
-from System.Collections import IEnumerable, IEnumerator
 
 
 class namespace_object(object):
@@ -133,30 +132,22 @@ def __build_module_uo():
         if obj.Exposure == gh.Kernel.GH_Exposure.hidden or obj.Obsolete:
             continue
 
-        t = clr.GetClrType(gh.Kernel.IGH_Component)
         library_id = obj.LibraryGuid
         assembly = gh.Instances.ComponentServer.FindAssembly(library_id)
         name = obj.Desc.Name
 
         if "LEGACY" in name or "#" in name:
             continue
-        name = re.sub("[^a-zA-Z0-9]", regex_helper, name)
+        name = re.sub("[^_a-zA-Z0-9]", regex_helper, name)
         if not name[0].isalpha():
             name = 'x' + name
 
-        m = core_module
-        if assembly is None:
-            # UserObjects
-            pass
-        elif not (t.IsAssignableFrom(obj.Type)):
-            # Specialized inputs/outputs and misconfigured components
-            # Discard
-            continue
-        elif not assembly.IsCoreLibrary:
+        if assembly is not None:
             # Compiled components, leave them to ghpythonlib
             continue
 
         function = __make_function_uo__(function_helper(obj, name))
+        m = core_module
         try:
             setattr(m, name, function)
             a = m.__dict__[name]
