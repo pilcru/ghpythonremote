@@ -104,6 +104,19 @@ if sys.platform == "cli":
             return b"".join(map(bytes, stream))
 
         rpyc.core.brine.dump = dump
+
+        import socket
+        def write(self, data):
+            try:
+                while data:
+                    count = self.sock.send(buffer(data[:self.MAX_IO_CHUNK]))
+                    data = data[count:]
+            except socket.error:
+                ex = sys.exc_info()[1]
+                self.close()
+                raise EOFError(ex)
+
+        rpyc.core.stream.SocketStream.write = write
 else:
     # This is only needed if the local is CPython and the remote is IronPython, doesn't
     # really hurt otherwise
