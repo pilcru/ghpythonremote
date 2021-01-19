@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/ghpythonremote.iml" filepath="$PROJECT_DIR$/.idea/ghpythonremote.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../rpyc/.idea/rpyc.iml" filepath="$PROJECT_DIR$/../rpyc/.idea/rpyc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../rpyc/rpyc/.idea/rpyc.iml" filepath="$PROJECT_DIR$/../rpyc/rpyc/.idea/rpyc.iml" />
     </modules>
   </component>
 </project>

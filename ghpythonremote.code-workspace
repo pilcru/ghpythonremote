@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "..\\rpyc"
+		}
+	],
+	"settings": {
+		"python.pythonPath": "C:\\Users\\Pierre\\miniconda3\\envs\\vscode\\python.exe"
+	}
+}
