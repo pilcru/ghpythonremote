@@ -73,7 +73,7 @@ setup(
     data_files=[
     ],
     install_requires=[
-        'rpyc==4.1.4'
+        'rpyc==4.1.5'
     ],
     extras_require={
         'dev': ['check-manifest'],
