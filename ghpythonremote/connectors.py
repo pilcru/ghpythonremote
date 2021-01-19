@@ -211,7 +211,7 @@ class PythonToGrasshopperRemote:
         Absolute path to the ghcompservice.py module that launches the server on the
         remote.
     rhino_ver : int
-        A Rhino version to use, from 5 to 7. Overridden by rhino_exe. Defaults to 6.
+        A Rhino version to use, from 5 to 7. Overridden by rhino_exe. Defaults to 7.
     rhino_exe : str
         Absolute path to the Rhino executable. By default, fetches from the windows
         registry the Rhino install with the same bitness as the platform, and version
@@ -228,7 +228,7 @@ class PythonToGrasshopperRemote:
     >>> rhino_file_path = os.path.join(ROOT, 'examples', 'curves.3dm')
     >>> rpyc_server_py = os.path.join(ROOT, 'ghcompservice.py')
     >>> with PythonToGrasshopperRemote(
-    >>>     rhino_file_path, rpyc_server_py, rhino_ver=6, timeout=60
+    >>>     rhino_file_path, rpyc_server_py, rhino_ver=7, timeout=60
     >>> ) as py2gh:
     >>>     rghcomp = py2gh.gh_remote_components
     >>>     rgh = py2gh.connection
@@ -242,7 +242,7 @@ class PythonToGrasshopperRemote:
         self,
         rhino_file_path,
         rpyc_server_py,
-        rhino_ver=6,
+        rhino_ver=7,
         rhino_exe=None,
         timeout=60,
         max_retry=3,
@@ -326,7 +326,7 @@ class PythonToGrasshopperRemote:
             self.rhino_popen.terminate()
 
     @staticmethod
-    def _get_rhino_path(version=6, preferred_bitness="same"):
+    def _get_rhino_path(version=7, preferred_bitness="same"):
         rhino_reg_key_path = None
         version_str = "{!s}.0".format(version)
         if platform.architecture()[0] == "64bit":
