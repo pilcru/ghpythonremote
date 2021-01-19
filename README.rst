@@ -15,10 +15,12 @@ gh-python-remote
 Installation
 ************
 
-Requires a Python 2.7 installation, not compatible with Python 3. Currently Windows only.
+Requires a Python 2.7 installation, not compatible with Python 3. Compatible with Mac and Windows with Rhino 7.
 
 1. Install the software dependencies:
 -------------------------------------
+
+Before installing gh-python-remote in **Rhino 7**, you will need to install Python 2, Rhino 7, and open Grasshopper in Rhino 6 at least once.
 
 Before installing gh-python-remote in **Rhino 6**, you will need to install Python 2, Rhino 6, and open Grasshopper in Rhino 6 at least once.
 
@@ -27,39 +29,44 @@ Before installing gh-python-remote in **Rhino 5**, you will need to install Pyth
 Install the following:
 
 :Python 2.7:
-    gh-python-remote was developed with the `Anaconda`_ distribution in mind, but any Python distribution works. If you already have Anaconda installed with Python 3, do not reinstall, instead just read the next paragraph.
+    gh-python-remote was developed with the `Anaconda`_ and `Miniconda`_ distributions in mind, but any Python 2.7 distribution works. If you already have Anaconda installed with Python 3, you do not need to reinstall it, you can create a virtual environment as explained below.
 
     *If you want to be able to name virtual environments in gh-python-remote by their conda name, select "Add conda to my PATH" when prompted during Anaconda's installation.*
+
+    *On Mac, the python distributed with the OS is outdated and difficult to use by the end-user. It is* **highly** *recommended to use a conda- or* `brew`_ *-based Python.*
 :Python `virtual environment`_ (optional):
-    Isolate dependencies for each project by creating a new virtual environment. If you use Anaconda, open the Windows command prompt (or the Anaconda prompt if you chose not to add conda to your PATH) and type:
+    Isolate dependencies for each project by creating a new virtual environment. If you use Anaconda or Miniconda, creating a virtual environment is easy.
+
+    - Open the Windows command prompt, or Mac terminal (or the Anaconda prompt if you chose not to add conda to your PATH during insallation)
+    - Run the following command:
 
     .. code-block:: bash
 
        conda create --name rhinoremote python=2.7 numpy scipy
 
-    This will set you up with a new virtual environment named ``rhinoremote``, and install numpy and scipy in it.
+    This will create a new virtual environment named ``rhinoremote``, and install numpy and scipy in it.
 :`Rhinoceros3D`_:
-    Version 5 and 6 on Windows are supported. Rhino 6 for Mac might be supported in a later release.
+    Version 7 is supported on Windows and Mac. Version 5 and 6 on Windows should work, but are not supported.
 :`Grasshopper`_:
-    On Rhino 6, it is already installed. On Rhino 5, install version 0.9.0076. **Open it at least once before continuing.**
+    On Rhino 6 and 7, it is already installed. On Rhino 5, install version 0.9.0076. **Open it at least once before continuing.**
 :`GH Python`_:
-    On Rhino 6, it is already installed. On Rhino 5, install version 0.6.0.3. **On Rhino 5, drop it on the Grasshopper canvas at least once before continuing.**
+    On Rhino 6 and 7, it is already installed. On Rhino 5, install version 0.6.0.3. **On Rhino 5, drop it on the Grasshopper canvas at least once before continuing.**
 
 2. Install gh-python-remote:
 --------------------------------
 
-From the Windows command prompt (or the special Anaconda or Python prompt if pip is not in your path by default), run:
+From the Windows command prompt, or Mac terminal (or the special Anaconda, or Python prompt if pip is not in your path by default), run:
 
-*(If you are using a virtual environment, remember to* **activate** *it first. With the conda virtual environment from above, you would need to run* ``conda activate rhinoremote`` *in the Windows or Anaconda prompt)*
+*(If you are using a virtual environment, remember to* **activate** *it first. With the conda virtual environment from above, you would need to run* ``conda activate rhinoremote`` *in the command prompt.)*
 
 .. code-block:: bash
 
    pip install gh-python-remote --upgrade
    python -m ghpythonremote._configure_ironpython_installation
 
-This will install gh-python-remote for Rhino 6, and install the gh-python-remote UserObject in all Grasshopper versions.
+This will install gh-python-remote for Rhino 7, and install the gh-python-remote UserObject in all Grasshopper versions.
 
-The ``ghpythonremote._configure_ironpython_installation`` script takes an optional location argument that can be ``5``, ``6`` (default), or the path to a target IronPython package directory.
+The ``ghpythonremote._configure_ironpython_installation`` script takes an optional location argument that can be ``5``, ``6``, ``7`` (default), or the path to a target IronPython package directory.
 
 For example, to install for Rhino 5, replace the second command with:
 
@@ -67,7 +74,7 @@ For example, to install for Rhino 5, replace the second command with:
 
    python -m ghpythonremote._configure_ironpython_installation 5
 
-To install to another location, like for Rhino 7:
+To install to another location:
 
 .. code-block:: bash
 
@@ -81,7 +88,7 @@ To install to another location, like for Rhino 7:
 Usage
 *****
 
-*All the examples files are copied in the* ``%APPDATA%\Grasshopper\UserObjects\gh-python-remote\examples`` *folder. You can also download them from the* `github repo`_.
+*All the examples files are copied to* ``%APPDATA%\Grasshopper\UserObjects\gh-python-remote\examples`` *on Windows, and* ``~/Grasshopper/UserObjects/gh-python-remote/examples`` *on Mac. You can also download them from the* `github repo`_.
 
 From Grasshopper to Python
 --------------------------
@@ -175,6 +182,8 @@ License
 Licensed under the `MIT license`_.
 
 .. _Anaconda: https://www.anaconda.com/download/
+.. _Miniconda: https://docs.conda.io/en/latest/miniconda.html
+.. _brew: https://docs.brew.sh/Homebrew-and-Python
 .. _virtual environment: https://docs.python.org/3/tutorial/venv.html
 .. _Rhinoceros3D: https://www.rhino3d.com/download
 .. _Grasshopper: https://www.rhino3d.com/download/grasshopper/1.0/wip/rc
