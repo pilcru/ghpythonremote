@@ -27,7 +27,7 @@ if __name__ == "__main__":
     rpyc_server_py = path.join(ROOT, "ghcompservice.py")
 
     with PythonToGrasshopperRemote(
-        None, rpyc_server_py, rhino_ver=6, timeout=60, log_level=logging.DEBUG
+        None, rpyc_server_py, rhino_ver=7, timeout=60, log_level=logging.DEBUG
     ) as py2gh:
         # Stuff that we can reach
         rghcomp = py2gh.gh_remote_components  # Named Grasshopper compiled components
