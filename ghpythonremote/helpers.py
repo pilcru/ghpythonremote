@@ -17,6 +17,14 @@ if platform.system() == "Linux" or not (WINDOWS or MACOS):
     logger.error("Unknown platform {!s}".format(platform.system()))
     raise RuntimeError("This package only runs on Windows and MacOS")
 
+if WINDOWS:
+    try:
+        import _winreg as winreg
+    except ImportError:
+        import winreg
+
+DEFAULT_RHINO_VERSION = 7
+
 
 def get_python_path(location=None):
     if location is None or location == "":
@@ -244,12 +252,9 @@ def get_rhino_ironpython_path(location=None):
         logger.warning(
             " Path {!s} is not a directory or does not exist.\n".format(location)
             + " " * 9
-            + "Falling back to getting IronPython lib folder path from MacOS /Applications folder.\n"
+            + "Falling back to getting IronPython lib folder path from MacOS ~/Library folder.\n"
         )
         return get_ironpython_from_macos_appsupport()
-
-
-DEFAULT_RHINO_VERSION = 7
 
 
 def get_ironpython_from_windows_appdata(rhino_version=DEFAULT_RHINO_VERSION):
@@ -458,3 +463,155 @@ def check_macos_ironpython_installation(ironpython_path, rhino_version):
 
 def get_ironpython_from_path(location):
     return location
+
+
+def get_gh_userobjects_path(location=None):
+    if location is None or location == "":
+        if WINDOWS:
+            return get_userobjects_from_windows_appdata()
+        else:
+            return get_userobjects_from_macos_appsupport()
+
+    if type(location) == int:
+        logger.debug(
+            " Looking for Grasshopper UserObjects folder of Rhino version {!s}.\n".format(
+                location
+            )
+        )
+        if WINDOWS:
+            return get_userobjects_from_windows_appdata(location)
+        else:
+            return get_userobjects_from_macos_appsupport(location)
+
+    if os.path.isdir(location):
+        logger.debug(
+            " Directly using Grasshopper UserObjects folder at {!s}\n".format(location)
+        )
+        return get_userobjects_from_path(location)
+
+    if WINDOWS:
+        logger.warning(
+            " Path {!s} is not a directory or does not exist.\n".format(location)
+            + " " * 9
+            + "Falling back to getting Grasshopper UserObjects folder path from Windows %APPDATA%.\n"
+        )
+        return get_userobjects_from_windows_appdata()
+    else:
+        logger.warning(
+            " Path {!s} is not a directory or does not exist.\n".format(location)
+            + " " * 9
+            + "Falling back to getting Grasshopper UserObjects folder path from MacOS ~/Library folder.\n"
+        )
+        return get_userobjects_from_macos_appsupport()
+
+
+def get_userobjects_from_windows_appdata(rhino_version=None):
+    if rhino_version is not None:
+        logger.warning(
+            "Discarding Rhino version {!s} -- on Windows, this package is always installed to the global UserObjects folder."
+        ).format(rhino_version)
+    return os.path.join(os.getenv("APPDATA", ""), "Grasshopper", "UserObjects")
+
+
+def get_userobjects_from_macos_appsupport(rhino_version=DEFAULT_RHINO_VERSION):
+    appsupport_path = os.path.abspath(
+        os.path.join(os.path.expanduser("~"), "Library", "Application Support")
+    )
+    if rhino_version == 7:
+        return os.path.join(
+            appsupport_path,
+            "McNeel",
+            "Rhinoceros",
+            "7.0",
+            "Plug-ins",
+            "Grasshopper (b45a29b1-4343-4035-989e-044e8580d9cf)",
+            "UserObjects",
+        )
+    elif rhino_version == 6:
+        return os.path.join(
+            appsupport_path,
+            "McNeel",
+            "Rhinoceros",
+            "6.0",
+            "Plug-ins",
+            "Grasshopper (b45a29b1-4343-4035-989e-044e8580d9cf)",
+            "UserObjects",
+        )
+    else:
+        logger.warning(
+            "Unknown Rhino version {!s}. Installing to default, version {!s}."
+        ).format(rhino_version, DEFAULT_RHINO_VERSION)
+        return get_userobjects_from_macos_appsupport()
+
+
+def get_userobjects_from_path(location):
+    return location
+
+
+def get_rhino_executable_path(version=DEFAULT_RHINO_VERSION, preferred_bitness="same"):
+    if WINDOWS:
+        return get_rhino_windows_path(version, preferred_bitness)
+    else:
+        return get_rhino_macos_path(version, preferred_bitness)
+
+
+def get_rhino_windows_path(version, preferred_bitness):
+    rhino_reg_key_path = None
+    version_str = "{!s}.0".format(version)
+    if platform.architecture()[0] == "64bit":
+        if preferred_bitness == "same" or preferred_bitness == "64":
+            if version == 5:
+                version_str += "x64"
+            rhino_reg_key_path = r"SOFTWARE\McNeel\Rhinoceros\{}\Install".format(
+                version_str
+            )
+            if version < 5:
+                rhino_reg_key_path = None
+        elif preferred_bitness == "32":
+            rhino_reg_key_path = r"SOFTWARE\WOW6432Node\McNeel\Rhinoceros\{}\Install"
+            rhino_reg_key_path = rhino_reg_key_path.format(version_str)
+    elif platform.architecture()[0] == "32bit":
+        if preferred_bitness == "same" or preferred_bitness == "32":
+            rhino_reg_key_path = r"SOFTWARE\McNeel\Rhinoceros\{}\Install".format(
+                version_str
+            )
+        if version > 5:
+            rhino_reg_key_path = None
+
+    if rhino_reg_key_path is None:
+        logger.error(
+            "Did not understand Rhino version ({!s}) and bitness ({!s}) options "
+            "for platform {!s}.".format(version, preferred_bitness, platform.machine())
+        )
+
+    # In Python 3, OpenKey might throw a FileNotFoundError, which is not defined in
+    # Python 2. Just pretend to work around that
+    try:
+        FileNotFoundError
+    except NameError:
+        FileNotFoundError = IOError
+    try:
+        rhino_reg_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, rhino_reg_key_path)
+        rhino_path = winreg.QueryValueEx(rhino_reg_key, "Path")[0]
+    except (FileNotFoundError, OSError) as e:
+        logger.error(
+            "Unable to find Rhino installation in registry. Are you running "
+            "Windows with Rhinoceros installed?"
+        )
+        raise e
+    return os.path.join(rhino_path, "Rhino.exe")
+
+
+def get_rhino_macos_path(version, preferred_bitness):
+    if version == 7:
+        return os.path.join(
+            ["Applications", "Rhino 7.app", "Contents", "MacOS", "Rhinoceros"]
+        )
+    elif version == 6:
+        return os.path.join(
+            ["Applications", "Rhinoceros.app", "Contents", "MacOS", "Rhinoceros"]
+        )
+    else:
+        logger.error("Unknown Rhino version {!s}.".format(version))
+        raise (RuntimeError("Unknown Rhino version"))
+

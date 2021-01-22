@@ -1,18 +1,17 @@
 import errno
 import logging
 import os
-import platform
 import socket
 import subprocess
 from time import sleep
 
-try:
-    import _winreg as winreg
-except ImportError:
-    import winreg
-
 from ghpythonremote import rpyc
-from .helpers import get_python_path, get_extended_env_path_conda
+from .helpers import (
+    get_python_path,
+    get_extended_env_path_conda,
+    get_rhino_executable_path,
+    WINDOWS,
+)
 
 logger = logging.getLogger("ghpythonremote.connectors")
 
@@ -116,9 +115,7 @@ class GrasshopperToPythonRemote:
         assert self.rpyc_server_py is not "" and self.rpyc_server_py is not None
         assert self.port is not "" and self.port is not None
         assert self.log_level is not "" and self.log_level is not None
-        python_call = '"{!s}" "{!s}" "{}" "{!s}"'.format(
-            self.python_exe, self.rpyc_server_py, self.port, self.log_level
-        )
+        python_call = [self.python_exe, self.rpyc_server_py, self.port, self.log_level]
         cwd = self.working_dir
         python_popen = subprocess.Popen(
             python_call,
@@ -247,7 +244,7 @@ class PythonToGrasshopperRemote:
         timeout=60,
         max_retry=3,
         port=None,
-        log_level=logging.WARNING
+        log_level=logging.WARNING,
     ):
         if rhino_exe is None:
             self.rhino_exe = self._get_rhino_path(version=rhino_ver)
@@ -326,57 +323,8 @@ class PythonToGrasshopperRemote:
             self.rhino_popen.terminate()
 
     @staticmethod
-    def _get_rhino_path(version=7, preferred_bitness="same"):
-        rhino_reg_key_path = None
-        version_str = "{!s}.0".format(version)
-        if platform.architecture()[0] == "64bit":
-            if preferred_bitness == "same" or preferred_bitness == "64":
-                if version == 5:
-                    version_str += "x64"
-                rhino_reg_key_path = r"SOFTWARE\McNeel\Rhinoceros\{}\Install".format(
-                    version_str
-                )
-                if version < 5:
-                    rhino_reg_key_path = None
-            elif preferred_bitness == "32":
-                rhino_reg_key_path = (
-                    r"SOFTWARE\WOW6432Node\McNeel\Rhinoceros\{}\Install"
-                )
-                rhino_reg_key_path = rhino_reg_key_path.format(version_str)
-        elif platform.architecture()[0] == "32bit":
-            if preferred_bitness == "same" or preferred_bitness == "32":
-                rhino_reg_key_path = r"SOFTWARE\McNeel\Rhinoceros\{}\Install".format(
-                    version_str
-                )
-            if version > 5:
-                rhino_reg_key_path = None
-
-        if rhino_reg_key_path is None:
-            logger.error(
-                "Did not understand Rhino version ({!s}) and bitness ({!s}) options "
-                "for platform {!s}.".format(
-                    version, preferred_bitness, platform.machine()
-                )
-            )
-
-        # In Python 3, OpenKey might throw a FileNotFoundError, which is not defined in
-        # Python 2. Just pretend to work around that
-        try:
-            FileNotFoundError
-        except NameError:
-            FileNotFoundError = IOError
-        try:
-            rhino_reg_key = winreg.OpenKey(
-                winreg.HKEY_LOCAL_MACHINE, rhino_reg_key_path
-            )
-            rhino_path = winreg.QueryValueEx(rhino_reg_key, "Path")[0]
-        except (FileNotFoundError, OSError) as e:
-            logger.error(
-                "Unable to find Rhino installation in registry. Are you running "
-                "Windows with Rhinoceros installed?"
-            )
-            raise e
-        return os.path.join(rhino_path, "Rhino.exe")
+    def _get_rhino_path(version, preferred_bitness):
+        return get_rhino_executable_path(version, preferred_bitness)
 
     def _launch_rhino(self):
         assert self.rhino_exe is not "" and self.rhino_exe is not None
@@ -392,9 +340,10 @@ class PythonToGrasshopperRemote:
         ]
         if self.rhino_file_path:
             rhino_call.append(self.rhino_file_path)
-        # Default escaping in subprocess.line2cmd does not work here,
-        # manually convert to string
-        rhino_call = " ".join(rhino_call)
+        if WINDOWS:
+            # Default escaping in subprocess.line2cmd does not work here,
+            # manually convert to string
+            rhino_call = " ".join(rhino_call)
         rhino_popen = subprocess.Popen(
             rhino_call, stdout=subprocess.PIPE, stdin=subprocess.PIPE
         )

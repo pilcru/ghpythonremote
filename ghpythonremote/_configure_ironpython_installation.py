@@ -4,7 +4,7 @@ from shutil import copy, rmtree
 import subprocess
 import sys
 
-from .helpers import get_rhino_ironpython_path
+from .helpers import get_rhino_ironpython_path, get_gh_userobjects_path
 
 logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.INFO)
 
@@ -40,9 +40,7 @@ if __name__ == "__main__":
     subprocess.check_call(pip_cmd)
 
     # Get the Grasshopper libraries base dir
-    gh_userobjects_path = os.path.join(
-        os.getenv("APPDATA", ""), "Grasshopper", "UserObjects"
-    )
+    gh_userobjects_path = get_gh_userobjects_path(location=location)
     if os.path.isdir(gh_userobjects_path):
         dest_dir_path = os.path.join(gh_userobjects_path, package_name)
     else:
