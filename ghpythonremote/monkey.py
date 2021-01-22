@@ -16,6 +16,7 @@ if sys.platform == "cli":
     fix_rhino_getattr = False
     try:
         from Rhino.RhinoApp import ExeVersion
+
         if ExeVersion == 6:
             fix_rhino_getattr = True
     except ImportError:
@@ -110,10 +111,11 @@ if sys.platform == "cli":
         rpyc.core.brine.dump = dump
 
         import socket
+
         def write(self, data):
             try:
                 while data:
-                    count = self.sock.send(buffer(data[:self.MAX_IO_CHUNK]))
+                    count = self.sock.send(buffer(data[: self.MAX_IO_CHUNK]))
                     data = data[count:]
             except socket.error:
                 ex = sys.exc_info()[1]
