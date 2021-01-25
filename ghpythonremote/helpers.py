@@ -162,19 +162,21 @@ def get_python_from_conda_env(env_name):
             python_exe = os.path.join(env_dir[0], "python.exe")
         else:
             python_exe = os.path.join(env_dir[0], "python")
-        if WINDOWS:
-            logger.warning(
-                "Path {!s} is not executable.\n".format(python_exe)
-                + "Falling back to getting python path from Windows %PATH%.\n"
-            )
-            return get_python_from_windows_path()
+        if os.path.isfile(python_exe) and os.access(python_exe, os.X_OK):
+            return python_exe
         else:
-            logger.warning(
-                "Path {!s} is not executable.\n".format(python_exe)
-                + "Falling back to getting python path from MacOS $PATH.\n"
-            )
-            return get_python_from_macos_path()
-        return python_exe
+            if WINDOWS:
+                logger.warning(
+                    "Path {!s} is not executable.\n".format(python_exe)
+                    + "Falling back to getting python path from Windows %PATH%.\n"
+                )
+                return get_python_from_windows_path()
+            else:
+                logger.warning(
+                    "Path {!s} is not executable.\n".format(python_exe)
+                    + "Falling back to getting python path from MacOS $PATH.\n"
+                )
+                return get_python_from_macos_path()
     except IndexError:
         if WINDOWS:
             logger.warning(
