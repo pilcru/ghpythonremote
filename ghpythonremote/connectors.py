@@ -115,7 +115,12 @@ class GrasshopperToPythonRemote:
         assert self.rpyc_server_py is not "" and self.rpyc_server_py is not None
         assert self.port is not "" and self.port is not None
         assert self.log_level is not "" and self.log_level is not None
-        python_call = [self.python_exe, self.rpyc_server_py, self.port, self.log_level]
+        python_call = [
+            self.python_exe,
+            self.rpyc_server_py,
+            str(self.port),
+            self.log_level,
+        ]
         cwd = self.working_dir
         python_popen = subprocess.Popen(
             python_call,
@@ -240,6 +245,7 @@ class PythonToGrasshopperRemote:
         rhino_file_path,
         rpyc_server_py,
         rhino_ver=7,
+        preferred_bitness="same",
         rhino_exe=None,
         timeout=60,
         max_retry=3,
@@ -247,7 +253,9 @@ class PythonToGrasshopperRemote:
         log_level=logging.WARNING,
     ):
         if rhino_exe is None:
-            self.rhino_exe = self._get_rhino_path(version=rhino_ver)
+            self.rhino_exe = self._get_rhino_path(
+                version=rhino_ver, preferred_bitness=preferred_bitness
+            )
         else:
             self.rhino_exe = rhino_exe
         self.rhino_file_path = rhino_file_path
