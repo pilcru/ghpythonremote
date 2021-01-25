@@ -7,9 +7,20 @@ import subprocess
 
 logger = logging.getLogger("ghpythonremote.helpers")
 
+
+RUNNING_IN_RHINO5 = False
+try:
+    from Rhino.RhinoApp import ExeVersion
+
+    if ExeVersion == 5:
+        RUNNING_IN_RHINO5 = True
+except ImportError:
+    pass
+
 WINDOWS = False
 MACOS = False
-if platform.system() == "Windows":
+# "cli" is for IronPython in Rhino 5
+if platform.system() == "Windows" or (RUNNING_IN_RHINO5 and platform.system() == "cli"):
     WINDOWS = True
 if platform.system() == "Darwin":
     MACOS = True
