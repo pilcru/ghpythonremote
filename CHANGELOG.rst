@@ -2,6 +2,13 @@
 Changelog
 *********
 
+1.4.1 (2021-01-27)
+------------------
+
+Fix
+^^^
+- Fix a small typo that created a false warning on MacOS install
+
 1.4.0 (2021-01-27)
 ------------------
 
