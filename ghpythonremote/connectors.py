@@ -338,14 +338,24 @@ class PythonToGrasshopperRemote:
         assert self.rhino_exe is not "" and self.rhino_exe is not None
         assert self.rpyc_server_py is not "" and self.rpyc_server_py is not None
         assert self.port is not "" and self.port is not None
-        rhino_call = [
-            '"' + self.rhino_exe + '"',
-            "/nosplash",
-            "/notemplate",
-            '/runscript="-_RunPythonScript ""{!s}"" {!s} {!s} -_Exit "'.format(
-                self.rpyc_server_py, self.port, self.log_level,
-            ),
-        ]
+        if WINDOWS:
+            rhino_call = [
+                '"' + self.rhino_exe + '"',
+                "/nosplash",
+                "/notemplate",
+                '/runscript="-_RunPythonScript ""{!s}"" {!s} {!s} -_Exit "'.format(
+                    self.rpyc_server_py, self.port, self.log_level,
+                ),
+            ]
+        else:
+            rhino_call = [
+                self.rhino_exe,
+                "-nosplash",
+                "-notemplate",
+                '-runscript=-_RunPythonScript "{!s}" {!s} {!s} -_Exit'.format(
+                    self.rpyc_server_py, self.port, self.log_level,
+                ),
+            ]
         if self.rhino_file_path:
             rhino_call.append(self.rhino_file_path)
         if WINDOWS:
@@ -393,7 +403,7 @@ class PythonToGrasshopperRemote:
                     raise
                 if i == self.timeout - 1:
                     raise
-                elif e is socket.error:
+                elif e is socket.error or isinstance(e, socket.error):
                     sleep(1)
 
     def _rebuild_gh_remote(self):

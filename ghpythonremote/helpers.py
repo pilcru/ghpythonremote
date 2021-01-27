@@ -37,6 +37,21 @@ if WINDOWS:
 DEFAULT_RHINO_VERSION = 7
 
 
+# IronPython is being picky about check_output in Mono, because some arguments are not supported. Base functionallity works:
+def _mono_check_output(*popenargs, **kwargs):
+    if "stdout" in kwargs:
+        raise ValueError("stdout argument not allowed, it will be overridden.")
+    process = subprocess.Popen(stdout=subprocess.PIPE, *popenargs, **kwargs)
+    output, unused_err = process.communicate()
+    retcode = process.poll()
+    if retcode:
+        cmd = kwargs.get("args")
+        if cmd is None:
+            cmd = popenargs[0]
+        raise subprocess.CalledProcessError(retcode, cmd, output=output)
+    return output
+
+
 def get_python_path(location=None):
     if location is None or location == "":
         if WINDOWS:
@@ -120,7 +135,7 @@ def get_python_from_windows_path():
 
 def get_python_from_macos_path():
     try:
-        python_exe = subprocess.check_output(["which", "python"]).split("\n")[0].strip()
+        python_exe = _mono_check_output(["which", "python"]).split("\n")[0].strip()
         return python_exe
     except (OSError, subprocess.CalledProcessError) as e:
         logger.error(
@@ -131,10 +146,34 @@ def get_python_from_macos_path():
 
 
 def get_python_from_conda_env(env_name):
+    if MACOS:
+        # Need to find the conda exec from the .zshrc file
+        try:
+            output = _mono_check_output(
+                "source ~/.zshrc; env", shell=True, executable="/bin/zsh"
+            )
+            new_vars_list = [line.partition("=")[::2] for line in output.split("\n")]
+            new_vars_dict = {name: value for (name, value) in new_vars_list}
+            conda_exe_path = new_vars_dict.get("CONDA_EXE", None)
+        except (OSError, subprocess.CalledProcessError):
+            logger.warning(
+                "Could not source ~/.zshrc file when looking for $CONDA_EXE. Continuing."
+            )
+        if conda_exe_path is None or not (
+            os.path.isfile(conda_exe_path) and os.access(conda_exe_path, os.X_OK)
+        ):
+            logger.warning("Could not find $CONDA_EXE in ~/.zshrc. Continuing.")
+            conda_exe_path = "conda"
+
     try:
-        envs = json.loads(subprocess.check_output(["conda", "env", "list", "--json"]))[
-            "envs"
-        ]
+        if WINDOWS:
+            envs = json.loads(
+                subprocess.check_output(["conda", "env", "list", "--json"])
+            )["envs"]
+        else:
+            envs = json.loads(
+                _mono_check_output([conda_exe_path, "env", "list", "--json"])
+            )["envs"]
     except OSError:
         if WINDOWS:
             logger.warning(
@@ -144,7 +183,7 @@ def get_python_from_conda_env(env_name):
             return get_python_from_windows_path()
         else:
             logger.warning(
-                "conda not found in your MacOS $PATH, cannot fetch environment by "
+                "conda not found in your MacOS $PATH or ~/.zshrc, cannot fetch environment by "
                 + "name.\nFalling back to getting python path from MacOS $PATH.\n"
             )
             return get_python_from_macos_path()
@@ -172,7 +211,7 @@ def get_python_from_conda_env(env_name):
         if WINDOWS:
             python_exe = os.path.join(env_dir[0], "python.exe")
         else:
-            python_exe = os.path.join(env_dir[0], "python")
+            python_exe = os.path.join(env_dir[0], "bin", "python")
         if os.path.isfile(python_exe) and os.access(python_exe, os.X_OK):
             return python_exe
         else:
@@ -618,11 +657,11 @@ def get_rhino_windows_path(version, preferred_bitness):
 def get_rhino_macos_path(version, preferred_bitness):
     if version == 7:
         return os.path.join(
-            ["Applications", "Rhino 7.app", "Contents", "MacOS", "Rhinoceros"]
+            "/Applications", "Rhino 7.app", "Contents", "MacOS", "Rhinoceros"
         )
     elif version == 6:
         return os.path.join(
-            ["Applications", "Rhinoceros.app", "Contents", "MacOS", "Rhinoceros"]
+            "/Applications", "Rhinoceros.app", "Contents", "MacOS", "Rhinoceros"
         )
     else:
         logger.error("Unknown Rhino version {!s}.".format(version))
