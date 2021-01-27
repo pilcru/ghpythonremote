@@ -477,7 +477,7 @@ def check_macos_ironpython_installation(ironpython_path, rhino_version):
         # Just check that the ghpythonlib folder is here and install in scripts
         ghpythonlib_path = os.path.join(ironpython_path, "lib", "ghpythonlib")
 
-        if not os.path.isfile(ghpythonlib_path):
+        if not os.path.isdir(ghpythonlib_path):
             logger.warning(
                 " No ghpythonlib folder found in {!s}.\n".format(
                     os.path.join(ironpython_path, "lib")

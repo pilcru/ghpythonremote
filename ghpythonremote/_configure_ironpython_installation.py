@@ -74,4 +74,4 @@ if __name__ == "__main__":
         for file_rel_path in copy_pair[1]:
             source = os.path.join(source_dir_path, *file_rel_path.split("/"))
             copy(source, dest)
-    logging.info("Copied example files to {!s}".format(dest_dir_path))
+    logging.info(" Copied example files to {!s}".format(dest_dir_path))
