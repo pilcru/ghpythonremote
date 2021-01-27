@@ -2,6 +2,14 @@
 Changelog
 *********
 
+1.4.0 (2021-01-27)
+------------------
+
+New
+^^^
+- Add support for Rhino 7.
+- Add support for MacOS.
+
 1.3.1 (2020-04-01)
 ------------------
 
