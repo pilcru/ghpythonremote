@@ -560,8 +560,10 @@ def get_gh_userobjects_path(location=None):
 def get_userobjects_from_windows_appdata(rhino_version=None):
     if rhino_version is not None:
         logger.warning(
-            "Discarding Rhino version {!s} -- on Windows, this package is always installed to the global UserObjects folder."
-        ).format(rhino_version)
+            " Discarding Rhino version {!s} -- on Windows, this package is always installed to the global UserObjects folder.".format(
+                rhino_version
+            )
+        )
     return os.path.join(os.getenv("APPDATA", ""), "Grasshopper", "UserObjects")
 
 
