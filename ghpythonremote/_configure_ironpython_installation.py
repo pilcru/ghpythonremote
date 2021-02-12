@@ -65,7 +65,7 @@ if __name__ == "__main__":
                 "examples/CPython_to_GH.py",
             ],
         ),
-        ("", ["ghcluster/GHPythonRemote.ghuser"]),
+        ("", ["ghcluster/GHPythonRemote.ghuser", "examples/TestClusterGHPythonRemote.ghuser"]),
     ]
     for copy_pair in copy_pairs:
         dest = os.path.join(dest_dir_path, copy_pair[0])

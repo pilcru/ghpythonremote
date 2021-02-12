@@ -54,6 +54,6 @@ if __name__ == "__main__":
         gh_curves = rs.coerceguidlist(curves_id)
         # Call a GH component
         print(sum(rghcomp.Area(gh_curves)[0]))
-        # Call a GH user object, previously created with the name "TestClusterGHPR"
+        # Call a GH user object, previously created with the name "TestClusterGHPythonRemote"
         # returns x^2 + y + 2
-        print(rghuo.TestClusterGHPR(3, y=4))  # = 15
+        print(rghuo.TestClusterGHPythonRemote(3, y=4))  # = 15
