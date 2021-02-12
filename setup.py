@@ -67,7 +67,7 @@ setup(
             'examples/GH_python_remote.ghx',
             'examples/GH_python_remote_plt_example.ghx',
             'examples/CPython_to_GH.py',
-            'examples/TestClusterGHPythonRemote.ghuser'
+            'examples/TestClusterGHPythonRemote.ghuser',
             'ghcluster/GHPythonRemote.ghuser',
         ],
     },
