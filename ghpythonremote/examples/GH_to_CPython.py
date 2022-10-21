@@ -8,6 +8,7 @@ import scriptcontext
 
 import ghpythonremote
 from ghpythonremote.connectors import GrasshopperToPythonRemote
+from Grasshopper.Kernel.GH_RuntimeMessageLevel import Error, Warning
 
 local_log_level = getattr(logging, log_level, logging.WARNING)
 logger = logging.getLogger("ghpythonremote")
@@ -22,6 +23,8 @@ logger = logging.getLogger("ghpythonremote.GH_to_python")
 
 ROOT = path.abspath(path.dirname(inspect.getfile(ghpythonremote)))
 rpyc_server_py = path.join(ROOT, "pythonservice.py")
+
+cluster_comp = ghenv.Component.OnPingDocument().Owner
 
 # Set connection to CLOSED if this is the first run
 # and initialize set of linked modules
@@ -43,10 +46,13 @@ while remote_python_status == "CONNECTING" or remote_python_status == "CLOSING":
             pass
         remote_python_status = "CLOSED"
         lkd_modules = set()
-        raise RuntimeError(
+        message = (
             "Connection left in an inconsistent state and not returning. Reset "
             "everything."
         )
+        if cluster_comp is not None:
+            cluster_comp.AddRuntimeMessage(Warning, message)
+        raise RuntimeError(message)
 
 if run:
     if not remote_python_status == "OPEN":
@@ -73,6 +79,18 @@ if run:
             lkd_modules.add(mod)
         except ImportError:
             gh2py_manager.__exit__(*sys.exc_info())
+            if cluster_comp is not None:
+                cluster_comp.AddRuntimeMessage(
+                    Error,
+                    'Could not import module "{}" in remote Python.'.format(mod)
+                )
+            raise
+        except EOFError:
+            if cluster_comp is not None:
+                cluster_comp.AddRuntimeMessage(
+                    Error,
+                    'Remote Python has been closed unexpectedly'
+                )
             raise
 
 elif not remote_python_status == "CLOSED":
