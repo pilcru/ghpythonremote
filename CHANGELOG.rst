@@ -2,6 +2,17 @@
 Changelog
 *********
 
+1.4.5 (2022-11-21)
+------------------
+
+New
+^^^
+- Propagate error messages through UserObject cluster (#35).
+
+Fix
+^^^
+- Fix dependency version requirements, pin to the last versions to support Python 2 (#45).
+
 1.4.4 (2021-02-12)
 ------------------
 
