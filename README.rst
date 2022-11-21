@@ -20,7 +20,7 @@ Requires a Python 2.7 installation, not compatible with Python 3. Compatible wit
 1. Install the software dependencies:
 -------------------------------------
 
-Before installing gh-python-remote in **Rhino 7**, you will need to install Python 2, Rhino 7, and open Grasshopper in Rhino 6 at least once.
+Before installing gh-python-remote in **Rhino 7**, you will need to install Python 2, Rhino 7, and open Grasshopper in Rhino 7 at least once.
 
 Before installing gh-python-remote in **Rhino 6**, you will need to install Python 2, Rhino 6, and open Grasshopper in Rhino 6 at least once.
 
