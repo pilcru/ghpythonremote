@@ -74,8 +74,8 @@ setup(
     data_files=[
     ],
     install_requires=[
-        'plumbum==1.7.2'
-        'rpyc==4.1.5'
+        'plumbum==1.7.2',
+        'rpyc==4.1.5',
     ],
     extras_require={
         'dev': ['check-manifest'],
